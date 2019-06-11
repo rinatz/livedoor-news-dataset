@@ -35,7 +35,8 @@ def create_model(path="news_classification_model.h5"):
     model.summary()
     model.fit(x_train, y_train, epochs=5, batch_size=16, validation_split=0.2)
 
-    print(model.evaluate(x_test, y_test))
+    test_loss, test_acc = model.evaluate(x_test, y_test)
+    print(f"test_loss: {test_loss:.4f} - test_acc: {test_acc:.4f}")
 
     model.save(path)
 
