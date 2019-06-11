@@ -42,7 +42,7 @@
 
             <div>
                 <label class="label">判定結果</label>
-                <canvas id="chart" height="100" v-if="showChart"></canvas>
+                <canvas id="chart" height="100"></canvas>
             </div>
         </div>
     </div>
@@ -52,20 +52,14 @@
             el: "#app",
             data: {
                 text: "",
-                showChart: false,
-                chart: null,
+                chart: new Chart("chart"),
             },
             watch: {
                 text: function (text) {
                     if (!text) {
-                        if (this.chart) {
-                            this.chart.destroy();
-                        }
-                        this.showChart = false;
+                        this.chart.destroy();
                         return;
                     }
-
-                    this.showChart = true;
 
                     const url = `http://${location.host}/scores`;
                     const data = { text: text };
@@ -115,10 +109,7 @@
                             }
                         };
 
-                        if (this.chart) {
-                            this.chart.destroy();
-                        }
-
+                        this.chart.destroy();
                         this.chart = new Chart("chart", config);
                     });
                 },
