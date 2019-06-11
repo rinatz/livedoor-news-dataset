@@ -104,7 +104,9 @@ def load_data(num_words=None, test_split=0.2):
 
 
 def get_tokenizer():
-    path = Path("~/.keras/datasets/livedoor_news/livedoor_news_tokenizer.pickle").expanduser()
+    path = Path(
+        "~/.keras/datasets/livedoor_news/livedoor_news_tokenizer.pickle"
+    ).expanduser()
 
     if not path.exists():
         raise ValueError("save_data() must be called before taking tokenizer.")
