@@ -45,7 +45,3 @@ def create_model(path="news_classification_model.h5"):
 
 def load_model(path="news_classification_model.h5"):
     return tf.keras.models.load_model(path)
-
-
-if __name__ == "__main__":
-    create_model()

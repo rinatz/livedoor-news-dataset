@@ -19,7 +19,7 @@ $ pipenv sync
 コーパスを使ってディープラーニングでモデルを作成します。
 
 ```shell
-$ pipenv run python -m news_classification.model
+$ pipenv run python -m news_classification create-model
 ```
 
 ## 分類器を試す
@@ -27,7 +27,7 @@ $ pipenv run python -m news_classification.model
 サーバを起動します。
 
 ```shell
-$ pipenv run python -m news_classification
+$ pipenv run python -m news_classification server
 ```
 
 http://localhost:8000 にアクセスすると UI ページが表示されますので、適当な文章を入力して下さい。下部に判定結果がグラフで表示されます。
