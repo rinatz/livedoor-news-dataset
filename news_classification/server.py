@@ -1,6 +1,6 @@
 import responder
 
-from .livedoor_news import parse_japanese, get_classifications, get_tokenizer
+from .livedoor_news import tokenize_japanese, get_classifications, get_tokenizer
 from .model import load_model
 
 api = responder.API(cors=True)
@@ -17,10 +17,10 @@ async def startup():
 async def get_scores(req, resp):
     req_body = await req.media()
     input_text = req_body["text"]
-    parsed_text = parse_japanese(input_text)
+    tokenized_text = " ".join(tokenize_japanese(input_text))
 
     scores = api.model.predict(
-        api.tokenizer.texts_to_matrix([parsed_text], mode="tfidf")
+        api.tokenizer.texts_to_matrix([tokenized_text], mode="tfidf")
     )
     descriptions = map(lambda x: x[1], get_classifications())
 

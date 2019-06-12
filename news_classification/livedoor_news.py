@@ -1,33 +1,11 @@
 from pathlib import Path
 import pickle
 
-import MeCab
 import numpy as np
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 
-
-def parse_japanese(japanese):
-    mecab = MeCab.Tagger("-d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
-
-    words = []
-
-    for result in mecab.parse(japanese).split("\n"):
-        if result in ["EOS", ""]:
-            continue
-
-        columns = result.split("\t")[1].split(",")
-        category, category_detail1, word = columns[0], columns[1], columns[6]
-
-        if category not in ["名詞", "動詞", "形容詞"]:
-            continue
-
-        if [category, category_detail1] == ["名詞", "数"]:
-            continue
-
-        words.append(word)
-
-    return " ".join(words)
+from .japanese_tokenizer import MeCabTokenizer
 
 
 def get_classifications():
@@ -45,6 +23,21 @@ def get_classifications():
     ]
 
 
+def tokenize_japanese(text):
+    def filter_token(_word, columns):
+        category, category_detail1 = columns[0], columns[1]
+
+        if category not in ["名詞", "動詞", "形容詞"]:
+            return False
+
+        if [category, category_detail1] == ["名詞", "数"]:
+            return False
+
+        return True
+
+    return MeCabTokenizer().tokenize(text, filter_token)
+
+
 def load_directory_data(directory):
     texts = []
 
@@ -53,7 +46,12 @@ def load_directory_data(directory):
             continue
 
         with file_path.open() as txt:
-            texts.append(parse_japanese(txt.read()))
+            _url = next(txt)
+            _datetime = next(txt)
+
+            text = txt.read()
+            tokens = tokenize_japanese(text)
+            texts.append(" ".join(tokens))
 
     return texts
 
