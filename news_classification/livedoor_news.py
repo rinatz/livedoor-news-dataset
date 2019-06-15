@@ -46,8 +46,8 @@ def load_directory_data(directory):
             continue
 
         with file_path.open() as txt:
-            _url = next(txt)
-            _datetime = next(txt)
+            _site_url = next(txt)
+            _wrote_at = next(txt)
 
             text = txt.read()
             tokens = tokenize_japanese(text)
