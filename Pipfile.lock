@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "361ec4fe9549712df401406afa56c0af9ab29c9716871dbd8c6130d577c34651"
+            "sha256": "78bfd46919d6c47d64112462fd733c158ded43cbecd4832019e270009ffd4f54"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -578,7 +578,7 @@
                 "sha256:c48692bf4587ce281d641087658eca275a5ad3b63c78297bbded96570ae9ce8f",
                 "sha256:fefc3b2b947c99737c348887db2c32e539160dcbeb7af9aa6b53db7a283538fe"
             ],
-            "markers": "sys_platform != 'win32' and sys_platform != 'cygwin' and platform_python_implementation != 'pypy'",
+            "markers": "sys_platform != 'win32' and sys_platform != 'cygwin' and sys_platform != 'cli'",
             "version": "==0.12.2"
         },
         "websockets": {
