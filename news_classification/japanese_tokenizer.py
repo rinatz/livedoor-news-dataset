@@ -1,12 +1,22 @@
+from pathlib import Path
+
 import MeCab
 
 
 class MeCabTokenizer:
     def __init__(self, dic=None):
         if dic:
-            self._mecab = MeCab.Tagger(f"-d {dic}")
+            if not Path(dic).exists():
+                raise RuntimeError(f"MeCab dictionary {dic} is not found.")
         else:
-            self._mecab = MeCab.Tagger("-d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
+            dic = "/usr/local/lib/mecab/dic/mecab-ipadic-neologd"
+
+            if not Path(dic).exists():
+                raise RuntimeError(
+                    f"NEologd is not installed in {dic}. You have to install NEologd from https://github.com/neologd/mecab-ipadic-neologd ."
+                )
+
+        self._mecab = MeCab.Tagger(f"-d {dic}")
 
     def tokenize(self, text, filter_token=None):
         tokens = []
