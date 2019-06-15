@@ -13,7 +13,8 @@ class MeCabTokenizer:
 
             if not Path(dic).exists():
                 raise RuntimeError(
-                    f"NEologd is not installed in {dic}. You have to install NEologd from https://github.com/neologd/mecab-ipadic-neologd ."
+                    f"NEologd is not installed in {dic}. "
+                    "You have to install NEologd from https://github.com/neologd/mecab-ipadic-neologd ."
                 )
 
         self._mecab = MeCab.Tagger(f"-d {dic}")
