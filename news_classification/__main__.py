@@ -10,7 +10,10 @@ def main(args=None):
     try:
         action = args[0]
     except IndexError:
-        print("Usage: python -m news_classification <create-model|server>", file=sys.stderr)
+        print(
+            "Usage: python -m news_classification <create-model|server>",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     if action == "create-model":
