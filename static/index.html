@@ -26,7 +26,6 @@
     <section class="section">
         <div class="container">
             <h1 class="title">テキスト分類器</h1>
-            <p class="subtitle">Created by Vue.js</p>
         </div>
     </section>
 
@@ -35,8 +34,7 @@
             <div class="field">
                 <label class="label">入力テキスト</label>
                 <div class="control">
-                    <textarea class="textarea" placeholder="ここにテキストを入力してください" rows="5"
-                        v-model="text">{{ text }}</textarea>
+                    <textarea class="textarea" placeholder="ここにテキストを入力してください" rows="5" v-model="text"></textarea>
                 </div>
             </div>
 
@@ -52,7 +50,12 @@
             el: "#app",
             data: {
                 text: "",
-                chart: new Chart("chart"),
+                chart: null,
+            },
+            mounted: function () {
+                this.$nextTick(function () {
+                    this.chart = new Chart("chart");
+                });
             },
             watch: {
                 text: function (text) {
@@ -65,46 +68,42 @@
                     const data = { text: text };
 
                     axios.post(url, data).then(resp => {
+                        const top3BackgroundColor = [
+                            "rgba(0, 150, 136, 0.2)",
+                            "rgba(63, 81, 181, 0.2)",
+                            "rgba(233, 30, 99, 0.2)",
+                        ];
+                        const top3BorderColor = [
+                            "rgba(0, 150, 136, 1)",
+                            "rgba(63, 81, 181, 1)",
+                            "rgba(233, 30, 99, 1)",
+                        ];
+
+                        var backgroundColor = Array(resp.data.scores.length).fill("rgba(158, 158, 158, 0.2)");
+                        var borderColor = Array(resp.data.scores.length).fill("rgba(158, 158, 158, 1)");
+
+                        for (i = 0; i < Math.min(resp.data.scores.length, 3); ++i) {
+                            backgroundColor[i] = top3BackgroundColor[i];
+                            borderColor[i] = top3BorderColor[i];
+                        }
+
                         const config = {
                             type: "horizontalBar",
                             data: {
                                 labels: resp.data.scores.map(x => x["description"]),
-                                datasets: [{
-                                    label: "確率 [%]",
-                                    data: resp.data.scores.map(x => x["value"] * 100),
-                                    borderWidth: 1,
-                                    backgroundColor: [
-                                        "rgba(0, 150, 136, 0.2)",
-                                        "rgba(63, 81, 181, 0.2)",
-                                        "rgba(233, 30, 99, 0.2)",
-                                        "rgba(158, 158, 158, 0.2)",
-                                        "rgba(158, 158, 158, 0.2)",
-                                        "rgba(158, 158, 158, 0.2)",
-                                        "rgba(158, 158, 158, 0.2)",
-                                        "rgba(158, 158, 158, 0.2)",
-                                        "rgba(158, 158, 158, 0.2)",
-                                    ],
-                                    borderColor: [
-                                        "rgba(0, 150, 136, 1)",
-                                        "rgba(63, 81, 181, 1)",
-                                        "rgba(233, 30, 99, 1)",
-                                        "rgba(158, 158, 158, 1)",
-                                        "rgba(158, 158, 158, 1)",
-                                        "rgba(158, 158, 158, 1)",
-                                        "rgba(158, 158, 158, 1)",
-                                        "rgba(158, 158, 158, 1)",
-                                        "rgba(158, 158, 158, 1)",
-                                    ],
-                                }],
+                                datasets: [
+                                    {
+                                        backgroundColor,
+                                        borderColor,
+                                        label: "確率 [%]",
+                                        data: resp.data.scores.map(x => x["value"] * 100),
+                                        borderWidth: 1,
+                                    }
+                                ],
                             },
                             options: {
                                 scales: {
-                                    xAxes: [{
-                                        ticks: {
-                                            min: 0,
-                                            max: 100,
-                                        }
-                                    }]
+                                    xAxes: [{ ticks: { min: 0, max: 100 } }]
                                 }
                             }
                         };
