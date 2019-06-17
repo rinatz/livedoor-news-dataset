@@ -42,14 +42,14 @@ export default {
     };
   },
   watch: {
-    text: function() {
-      if (!this.text) {
+    text: function(text) {
+      if (!text) {
         this.showChart = false;
         return;
       }
 
       axios
-        .post(`http://${location.host}/scores`, { text: this.text })
+        .post(`http://${location.host}/scores`, { text })
         .then(({ data: { scores } }) => {
           let length = scores.length - 3;
 
