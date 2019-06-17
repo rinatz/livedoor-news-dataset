@@ -32,7 +32,7 @@ async def get_scores(req, resp):
     descriptions = map(lambda x: x[1], get_classifications())
 
     resp.media = {
-        "inputTest": input_text,
+        "inputText": input_text,
         "scores": sorted(
             [
                 {"description": description, "value": float(value)}
