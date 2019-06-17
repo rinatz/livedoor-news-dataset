@@ -3,7 +3,14 @@ import responder
 from .livedoor_news import tokenize_japanese, get_classifications, get_tokenizer
 from .model import load_model
 
-api = responder.API(cors=True)
+api = responder.API(
+    cors=True,
+    cors_params={
+        "allow_origins": ["*"],
+        "allow_methods": ["*"],
+        "allow_headers": ["*"],
+    }
+)
 api.add_route("/", static=True)
 
 
