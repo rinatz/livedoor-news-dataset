@@ -18,8 +18,6 @@ def main(argv=None):
     argv = argv or sys.argv[1:]
     args = docopt(__doc__, argv=argv)
 
-    print(args)
-
     if args["create"]:
         create_model()
     elif args["serve"]:
