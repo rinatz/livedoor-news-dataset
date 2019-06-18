@@ -5,10 +5,11 @@
 ## 必要なもの
 
 - Python 3.7
+- Pipenv
 - MeCab
 - NEologd (MeCab 辞書)
 
-## インストール
+## 準備
 
 ```shell
 $ pipenv sync
