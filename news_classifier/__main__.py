@@ -10,8 +10,8 @@ import sys
 
 from docopt import docopt
 
-from .server import api
 from .model import create_model
+from .server import api
 
 
 def main(argv=None):
