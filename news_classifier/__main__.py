@@ -1,4 +1,5 @@
 """News Classifier.
+
 Usage:
     news_classifier create
     news_classifier serve
