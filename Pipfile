@@ -11,6 +11,7 @@ pylint = "==2.3.1"
 rope = "==0.14.0"
 
 [packages]
+docopt = "==0.6.2"
 mecab-python3 = "==0.996.2"
 numpy = "==1.16.4"
 keras = "==2.2.4"

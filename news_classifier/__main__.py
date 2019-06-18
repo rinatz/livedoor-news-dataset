@@ -1,24 +1,28 @@
+"""News Classifier.
+Usage:
+    news_classifier create
+    news_classifier serve
+
+Options:
+    -h --help       Show this message.
+"""
 import sys
+
+from docopt import docopt
 
 from .server import api
 from .model import create_model
 
 
-def main(args=None):
-    args = args or sys.argv[1:]
+def main(argv=None):
+    argv = argv or sys.argv[1:]
+    args = docopt(__doc__, argv=argv)
 
-    try:
-        action = args[0]
-    except IndexError:
-        print(
-            "Usage: python -m news_classifier <create|serve>",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    print(args)
 
-    if action == "create":
+    if args["create"]:
         create_model()
-    elif action == "serve":
+    elif args["serve"]:
         api.run(address="0.0.0.0", port=8000)
 
 
