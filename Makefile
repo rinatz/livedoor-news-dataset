@@ -7,6 +7,10 @@ init:
 create:
 	pipenv run create
 
+.PHONY: build
+build:
+	pipenv run build
+
 .PHONY: serve
 serve:
 	pipenv run serve
