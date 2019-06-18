@@ -1,4 +1,4 @@
-# news_classification
+# news_classifier
 
 [Livedoor ニュースコーパス] を使ってニュース記事の分類器を作成します。
 
@@ -12,6 +12,7 @@
 
 ```shell
 $ pipenv sync
+$ pipenv run init
 ```
 
 ## モデルの作成
@@ -19,7 +20,15 @@ $ pipenv sync
 コーパスを使ってディープラーニングでモデルを作成します。
 
 ```shell
-$ pipenv run python -m news_classification create-model
+$ pipenv run create
+```
+
+## Web ページの作成
+
+Vue.js で書かれたソースコードをビルドして Web ページを作成します。
+
+```shell
+$ pipenv run build
 ```
 
 ## 分類器を試す
@@ -27,9 +36,9 @@ $ pipenv run python -m news_classification create-model
 サーバを起動します。
 
 ```shell
-$ pipenv run python -m news_classification server
+$ pipenv run serve
 ```
 
-http://localhost:8000 にアクセスすると UI ページが表示されますので、適当な文章を入力して下さい。下部に判定結果がグラフで表示されます。
+http://localhost:8000 にアクセスすると Web ページが表示されますので、適当な文章を入力して下さい。下部に判定結果がグラフで表示されます。
 
 [Livedoor ニュースコーパス]: http://www.rondhuit.com/download.html#ldcc

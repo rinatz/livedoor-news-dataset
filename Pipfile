@@ -23,3 +23,9 @@ python_version = "3.7"
 
 [pipenv]
 allow_prereleases = true
+
+[scripts]
+init = "npm install"
+create = "python -m news_classifier create"
+build = "npm run build"
+serve = "python -m news_classifier serve"

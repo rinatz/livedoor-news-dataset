@@ -3,7 +3,7 @@ import keras
 from .livedoor_news import load_data
 
 
-def create_model(path="news_classification_model.h5"):
+def create_model(path="news_classifier_model.h5"):
     (x_train, y_train), (x_test, y_test) = load_data()
 
     y_train = keras.utils.to_categorical(y_train)
@@ -33,5 +33,5 @@ def create_model(path="news_classification_model.h5"):
     return model
 
 
-def load_model(path="news_classification_model.h5"):
+def load_model(path="news_classifier_model.h5"):
     return keras.models.load_model(path)

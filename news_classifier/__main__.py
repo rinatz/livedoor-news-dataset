@@ -11,14 +11,14 @@ def main(args=None):
         action = args[0]
     except IndexError:
         print(
-            "Usage: python -m news_classification <create-model|server>",
+            "Usage: python -m news_classifier <create|serve>",
             file=sys.stderr,
         )
         sys.exit(1)
 
-    if action == "create-model":
+    if action == "create":
         create_model()
-    elif action == "server":
+    elif action == "serve":
         api.run(address="0.0.0.0", port=8000)
 
 
