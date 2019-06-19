@@ -19,23 +19,32 @@ api = responder.API(
 api.add_route("/", static=True)
 
 
-@api.schema("Classification")
-class ClassificationSchema(Schema):
-    description = fields.Str(required=True)
-    score = fields.Float(required=True)
+@api.schema("ClassificationRequest")
+class ClassificationRequestSchema(Schema):
+    text = fields.Str(required=True, description="分析するテキスト")
+
+
+@api.schema("Prediction")
+class PredictionSchema(Schema):
+    description = fields.Str(required=True, description="分類項目")
+    possibility = fields.Float(required=True, description="その項目に分類される可能性")
 
 
 @api.schema("TFIDF")
 class TFIDFSchema(Schema):
-    word = fields.Str(required=True)
-    value = fields.Float(required=True)
+    word = fields.Str(required=True, description="入力テキストのトークン化されたワード")
+    value = fields.Float(required=True, description="TF-IDF の値")
 
 
-@api.schema("Scores")
-class ScoresSchema(Schema):
-    inputTest = fields.Str(required=True)
-    classification = fields.Nested(ClassificationSchema, required=True, many=True)
-    tfidf = fields.Nested(TFIDFSchema, required=True, many=True)
+@api.schema("ClassificationResponse")
+class ClassificationResponseSchema(Schema):
+    inputTest = fields.Str(required=True, description="入力テキスト")
+    predictions = fields.Nested(
+        PredictionSchema, required=True, many=True, description="分類結果"
+    )
+    tfidf = fields.Nested(
+        TFIDFSchema, required=True, many=True, description="各ワードの TF-IDF"
+    )
 
 
 @api.on_event("startup")
@@ -44,26 +53,26 @@ async def startup():
     api.tokenizer = get_tokenizer()
 
 
-@api.route("/scores")
-async def get_scores(req, resp):
+@api.route("/classification")
+async def classification(req, resp):
     """テキストのトピック分析を行います。
     ---
     post:
+      tags:
+        - 分類器
       description: 入力されたテキストのトピック分析の結果と TF-IDF を取得します。
-      parameters:
-        - name: text
-          in: query
-          required: true
-          description: 分析するテキスト
-          schema:
-            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClassificationRequest"
       responses:
         "200":
           description: 成功
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Scores"
+                $ref: "#/components/schemas/ClassificationResponse"
     """
 
     req_body = await req.media()
@@ -72,7 +81,7 @@ async def get_scores(req, resp):
     texts = [" ".join(tokenized_text)]
     tfidf = api.tokenizer.texts_to_matrix(texts, mode="tfidf")
 
-    scores = api.model.predict(tfidf)
+    possibilities = api.model.predict(tfidf)
     descriptions = map(lambda x: x[1], get_classifications())
 
     word_tfidf = {}
@@ -84,15 +93,15 @@ async def get_scores(req, resp):
         except KeyError:
             word_tfidf[word] = 0.0
 
-    resp.media = ScoresSchema().dump(
+    resp.media = ClassificationResponseSchema().dump(
         {
             "inputText": input_text,
-            "classification": sorted(
+            "predictions": sorted(
                 [
-                    {"description": description, "score": float(score)}
-                    for description, score in zip(descriptions, scores[0])
+                    {"description": description, "possibility": possibility}
+                    for description, possibility in zip(descriptions, possibilities[0])
                 ],
-                key=lambda x: x["score"],
+                key=lambda x: x["possibility"],
                 reverse=True,
             ),
             "tfidf": sorted(
