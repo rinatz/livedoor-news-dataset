@@ -24,19 +24,36 @@ async def startup():
 async def get_scores(req, resp):
     req_body = await req.media()
     input_text = req_body["text"]
-    tokenized_text = " ".join(tokenize_japanese(input_text))
+    tokenized_text = tokenize_japanese(input_text)
+    texts = [" ".join(tokenized_text)]
+    tfidf = api.tokenizer.texts_to_matrix(texts, mode="tfidf")
 
-    scores = api.model.predict(
-        api.tokenizer.texts_to_matrix([tokenized_text], mode="tfidf")
-    )
+    scores = api.model.predict(tfidf)
     descriptions = map(lambda x: x[1], get_classifications())
+
+    word_tfidf = {}
+
+    for word in tokenized_text:
+        try:
+            index = api.tokenizer.word_index[word]
+            word_tfidf[word] = tfidf[0][index]
+        except KeyError:
+            word_tfidf[word] = 0.0
 
     resp.media = {
         "inputText": input_text,
-        "scores": sorted(
+        "classification": sorted(
             [
-                {"description": description, "value": float(value)}
-                for description, value in zip(descriptions, scores[0])
+                {"description": description, "score": float(score)}
+                for description, score in zip(descriptions, scores[0])
+            ],
+            key=lambda x: x["score"],
+            reverse=True,
+        ),
+        "tfidf": sorted(
+            [
+                {"word": word, "value": value}
+                for word, value in word_tfidf.items()
             ],
             key=lambda x: x["value"],
             reverse=True,

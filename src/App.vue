@@ -7,14 +7,31 @@
       </div>
     </div>
 
-    <div>
+    <div v-if="showResult">
       <label class="label">判定結果</label>
+
       <horizontal-bar-chart
-        v-if="showChart"
         v-bind:chart-data="chartData"
         v-bind:options="chartOptions"
         v-bind:height="100"
       ></horizontal-bar-chart>
+
+      <table class="table is-striped is-fullwidth">
+        <thead>
+          <tr>
+            <th>ランク</th>
+            <th>ワード</th>
+            <th>TF-IDF</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(x, index) in tfidf" v-bind:key="index">
+            <td>{{ index + 1 }}</td>
+            <td>{{ x.word }}</td>
+            <td>{{ x.value }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -32,26 +49,27 @@ export default {
   data: function() {
     return {
       text: "",
-      showChart: false,
+      showResult: false,
       chartData: {},
       chartOptions: {
         scales: {
           xAxes: [{ ticks: { min: 0, max: 100 } }]
         }
-      }
+      },
+      tfidf: []
     };
   },
   watch: {
     text: function(text) {
       if (!text) {
-        this.showChart = false;
+        this.showResult = false;
         return;
       }
 
       axios
         .post(`http://${location.host}/scores`, { text })
-        .then(({ data: { scores } }) => {
-          let length = scores.length - 3;
+        .then(({ data: { classification, tfidf } }) => {
+          let length = classification.length - 3;
 
           if (length < 0) {
             length = 0;
@@ -69,20 +87,22 @@ export default {
             "rgba(233, 30, 99, 1)"
           ].concat(Array(length).fill("rgba(158, 158, 158, 1)"));
 
-          this.showChart = true;
+          this.showResult = true;
 
           this.chartData = {
-            labels: scores.map(x => x["description"]),
+            labels: classification.map(x => x["description"]),
             datasets: [
               {
                 backgroundColor,
                 borderColor,
                 label: "確率 [%]",
-                data: scores.map(x => x["value"] * 100),
+                data: classification.map(x => x["score"] * 100),
                 borderWidth: 1
               }
             ]
           };
+
+          this.tfidf = tfidf;
         });
     }
   }
