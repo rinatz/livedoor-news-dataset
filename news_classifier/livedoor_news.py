@@ -5,7 +5,7 @@ import keras
 from keras_preprocessing.text import Tokenizer, tokenizer_from_json
 from sklearn.model_selection import train_test_split
 
-from .japanese_tokenizer import MeCabTokenizer
+from .japanese import MeCabTokenizer
 
 
 def get_classifications():
@@ -24,18 +24,18 @@ def get_classifications():
 
 
 def tokenize_japanese(text):
-    def filter_token(_word, columns):
+    def in_stop_words(_word, columns):
         category, category_detail1 = columns[0], columns[1]
 
         if category not in ["名詞", "動詞", "形容詞"]:
-            return False
+            return True
 
         if [category, category_detail1] == ["名詞", "数"]:
-            return False
+            return True
 
-        return True
+        return False
 
-    return MeCabTokenizer().tokenize(text, filter_token)
+    return MeCabTokenizer().tokenize(text, in_stop_words)
 
 
 def load_directory_data(directory):
