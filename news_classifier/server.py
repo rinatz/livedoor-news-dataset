@@ -60,6 +60,7 @@ async def classification(req, resp):
     post:
       tags:
         - 分類器
+      summary: テキストのトピック分析を行います。
       description: 入力されたテキストのトピック分析の結果と TF-IDF を取得します。
       requestBody:
         content:
