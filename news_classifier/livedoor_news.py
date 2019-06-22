@@ -4,6 +4,7 @@ import numpy as np
 import keras
 from keras_preprocessing.text import Tokenizer, tokenizer_from_json
 from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 
 from .japanese import MeCabTokenizer
 
@@ -24,18 +25,7 @@ def get_classifications():
 
 
 def tokenize_japanese(text):
-    def in_stop_words(_word, columns):
-        category, category_detail1 = columns[0], columns[1]
-
-        if category not in ["名詞", "動詞", "形容詞"]:
-            return True
-
-        if [category, category_detail1] == ["名詞", "数"]:
-            return True
-
-        return False
-
-    return MeCabTokenizer().tokenize(text, in_stop_words)
+    return MeCabTokenizer().tokenize(text)
 
 
 def load_directory_data(directory):
@@ -68,7 +58,7 @@ def save_data(num_words=None):
     labels = []
     livedoor_news = Path(tar_path).parent
 
-    for label, (site_name, _description) in enumerate(get_classifications()):
+    for label, (site_name, _description) in tqdm(enumerate(get_classifications())):
         site_texts = load_directory_data(livedoor_news / "text" / site_name)
         texts += site_texts
         labels += [label] * len(site_texts)
