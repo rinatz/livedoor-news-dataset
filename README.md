@@ -2,6 +2,10 @@
 
 [Livedoor ニュースコーパス] を使ったニュースの分類器のリファレンス実装です。
 
+<div align="center">
+    <img src="screenshot.png" />
+</div>
+
 ## 必要なもの
 
 - Python 3.7
