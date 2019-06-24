@@ -13,7 +13,8 @@ class MeCabTokenizer:
 
             if not Path(dic).exists():
                 raise RuntimeError(
-                    f"NEologd must be installed in {dic}: "
+                    "MeCabTokenizer needs to take a path to NEologd. "
+                    f"If not, assumes to be installed in {dic}: "
                     "https://github.com/neologd/mecab-ipadic-neologd"
                 )
 
