@@ -12,13 +12,15 @@ rope = "==0.14.0"
 
 [packages]
 docopt = "==0.6.2"
+matplotlib = "==3.1.0"
 mecab-python3 = "==0.996.2"
 numpy = "==1.16.4"
 keras = "==2.2.4"
 keras-metrics = "==1.1.0"
+pandas = "==0.24.2"
+responder = "==1.3.1"
 scikit-learn = "==0.21.2"
 tensorflow = "==1.13.1"
-responder = "==1.3.1"
 tqdm = "==4.32.2"
 
 [requires]
