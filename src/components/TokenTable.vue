@@ -8,10 +8,10 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(x, index) in tfidf" v-bind:key="index">
+      <tr v-for="(token, index) in tokens" v-bind:key="index">
         <td>{{ index + 1 }}</td>
-        <td>{{ x.word }}</td>
-        <td>{{ x.value }}</td>
+        <td>{{ token.lemma }}</td>
+        <td>{{ token.tfidf }}</td>
       </tr>
     </tbody>
   </table>
@@ -21,6 +21,6 @@
 import "bulma/css/bulma.min.css";
 
 export default {
-  props: ["tfidf"]
+  props: ["tokens"]
 };
 </script>

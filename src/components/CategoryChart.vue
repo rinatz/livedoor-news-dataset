@@ -6,7 +6,7 @@ export default {
   mixins: [mixins.reactiveData],
 
   props: {
-    predictions: {
+    categories: {
       type: Array,
       required: false,
       default: () => []
@@ -25,7 +25,7 @@ export default {
 
   computed: {
     backgroundColor: function() {
-      let length = this.predictions.length - 3;
+      let length = this.categories.length - 3;
 
       if (length < 0) {
         length = 0;
@@ -38,7 +38,7 @@ export default {
       ].concat(Array(length).fill("rgba(158, 158, 158, 0.2)"));
     },
     borderColor: function() {
-      let length = this.predictions.length - 3;
+      let length = this.categories.length - 3;
 
       if (length < 0) {
         length = 0;
@@ -53,13 +53,13 @@ export default {
   },
 
   watch: {
-    predictions: function(predictions) {
+    categories: function(categories) {
       this.chartData = {
-        labels: predictions.map(x => x["description"]),
+        labels: categories.map(x => x["name"]),
         datasets: [
           {
-            label: "可能性 [%]",
-            data: predictions.map(x => x["possibility"] * 100),
+            label: "信頼性 [%]",
+            data: categories.map(x => x["confidence"] * 100),
             borderWidth: 1,
             backgroundColor: this.backgroundColor,
             borderColor: this.borderColor

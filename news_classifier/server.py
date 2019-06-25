@@ -19,31 +19,31 @@ api = responder.API(
 api.add_route("/", static=True)
 
 
-@api.schema("ClassificationRequest")
-class ClassificationRequestSchema(Schema):
+@api.schema("Document")
+class DocumentSchema(Schema):
     text = fields.Str(required=True, description="分析するテキスト")
 
 
-@api.schema("Prediction")
-class PredictionSchema(Schema):
-    description = fields.Str(required=True, description="分類項目")
-    possibility = fields.Float(required=True, description="その項目に分類される可能性")
+@api.schema("ClassificationCategory")
+class ClassificationCategorySchema(Schema):
+    name = fields.Str(required=True, description="分類項目")
+    confidence = fields.Float(required=True, description="分類結果に対する信頼性")
 
 
-@api.schema("TFIDF")
-class TFIDFSchema(Schema):
-    word = fields.Str(required=True, description="入力テキストのトークン化されたワード")
-    value = fields.Float(required=True, description="TF-IDF の値")
+@api.schema("Token")
+class TokenSchema(Schema):
+    lemma = fields.Str(required=True, description="入力テキストに含まれる単語の見出し語")
+    tfidf = fields.Float(required=True, description="単語の tf-idf")
 
 
-@api.schema("ClassificationResponse")
-class ClassificationResponseSchema(Schema):
-    inputTest = fields.Str(required=True, description="入力テキスト")
-    predictions = fields.Nested(
-        PredictionSchema, required=True, many=True, description="分類結果"
+@api.schema("Classification")
+class ClassificationSchema(Schema):
+    text = fields.Str(required=True, description="入力テキスト")
+    categories = fields.Nested(
+        ClassificationCategorySchema, required=True, many=True, description="分類結果"
     )
-    tfidf = fields.Nested(
-        TFIDFSchema, required=True, many=True, description="各ワードの TF-IDF"
+    tokens = fields.Nested(
+        TokenSchema, required=True, many=True, description="テキストをトークン化した結果"
     )
 
 
@@ -53,27 +53,26 @@ async def startup():
     api.tokenizer = get_tokenizer()
 
 
-@api.route("/classification")
-async def classification(req, resp):
+@api.route("/classifications")
+async def classifications(req, resp):
     """テキストのトピック分析を行います。
     ---
     post:
       tags:
         - 分類器
       summary: テキストのトピック分析を行います。
-      description: 入力されたテキストのトピック分析の結果と TF-IDF を取得します。
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ClassificationRequest"
+              $ref: "#/components/schemas/Document"
       responses:
         "200":
           description: 成功
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ClassificationResponse"
+                $ref: "#/components/schemas/Classification"
     """
 
     req_body = await req.media()
@@ -82,8 +81,8 @@ async def classification(req, resp):
     texts = [" ".join(tokenized_text)]
     tfidf = api.tokenizer.texts_to_matrix(texts, mode="tfidf")
 
-    possibilities = api.model.predict(tfidf)
-    descriptions = map(lambda x: x[1], get_classifications())
+    confidences = api.model.predict(tfidf)
+    names = map(lambda x: x[1], get_classifications())
 
     word_tfidf = {}
 
@@ -94,20 +93,20 @@ async def classification(req, resp):
         except KeyError:
             word_tfidf[word] = 0.0
 
-    resp.media = ClassificationResponseSchema().dump(
+    resp.media = ClassificationSchema().dump(
         {
-            "inputText": input_text,
-            "predictions": sorted(
+            "text": input_text,
+            "categories": sorted(
                 [
-                    {"description": description, "possibility": possibility}
-                    for description, possibility in zip(descriptions, possibilities[0])
+                    {"name": name, "confidence": confidence}
+                    for name, confidence in zip(names, confidences[0])
                 ],
-                key=lambda x: x["possibility"],
+                key=lambda x: x["confidence"],
                 reverse=True,
             ),
-            "tfidf": sorted(
-                [{"word": word, "value": value} for word, value in word_tfidf.items()],
-                key=lambda x: x["value"],
+            "tokens": sorted(
+                [{"lemma": word, "tfidf": tfidf} for word, tfidf in word_tfidf.items()],
+                key=lambda x: x["tfidf"],
                 reverse=True,
             ),
         }

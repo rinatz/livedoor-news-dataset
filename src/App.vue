@@ -9,31 +9,31 @@
 
     <div v-if="showResult">
       <label class="label">判定結果</label>
-      <prediction-chart v-bind:predictions="predictions" v-bind:height="100"></prediction-chart>
-      <tfidf-table v-bind:tfidf="tfidf"></tfidf-table>
+      <category-chart v-bind:categories="categories" v-bind:height="100"></category-chart>
+      <token-table v-bind:tokens="tokens"></token-table>
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import TfidfTable from "./components/TfidfTable.vue";
-import PredictionChart from "./components/PredictionChart.vue";
+import CategoryChart from "./components/CategoryChart.vue";
+import TokenTable from "./components/TokenTable.vue";
 import "bulma/css/bulma.min.css";
 
 export default {
   name: "app",
 
   components: {
-    TfidfTable,
-    PredictionChart
+    CategoryChart,
+    TokenTable
   },
 
   data: function() {
     return {
       text: "",
-      predictions: [],
-      tfidf: []
+      categories: [],
+      tokens: []
     };
   },
 
@@ -46,11 +46,11 @@ export default {
   watch: {
     text: function(text) {
       axios
-        .post("/classification", { text })
-        .then(({ data: { predictions, tfidf } }) => {
+        .post("/classifications", { text })
+        .then(({ data: { categories, tokens } }) => {
           this.$nextTick(function() {
-            this.predictions = predictions;
-            this.tfidf = tfidf;
+            this.categories = categories;
+            this.tokens = tokens;
           });
         });
     }
