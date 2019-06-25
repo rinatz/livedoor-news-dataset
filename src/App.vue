@@ -45,6 +45,10 @@ export default {
 
   watch: {
     text: function(text) {
+      if (!this.text) {
+        return;
+      }
+
       axios
         .post("/classifications", { text })
         .then(({ data: { categories, tokens } }) => {
