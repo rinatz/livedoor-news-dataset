@@ -55,11 +55,11 @@ export default {
   watch: {
     categories: function(categories) {
       this.chartData = {
-        labels: categories.map(x => x['name']),
+        labels: categories.map(x => x.name),
         datasets: [
           {
             label: '信頼性 [%]',
-            data: categories.map(x => x['confidence'] * 100),
+            data: categories.map(x => x.confidence * 100),
             borderWidth: 1,
             backgroundColor: this.backgroundColor,
             borderColor: this.borderColor
