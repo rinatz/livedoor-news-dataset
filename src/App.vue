@@ -16,13 +16,13 @@
 </template>
 
 <script>
-import axios from "axios";
-import CategoryChart from "./components/CategoryChart.vue";
-import TokenTable from "./components/TokenTable.vue";
-import "bulma/css/bulma.min.css";
+import axios from 'axios';
+import CategoryChart from './components/CategoryChart.vue';
+import TokenTable from './components/TokenTable.vue';
+import 'bulma/css/bulma.min.css';
 
 export default {
-  name: "app",
+  name: 'app',
 
   components: {
     CategoryChart,
@@ -31,7 +31,7 @@ export default {
 
   data: function() {
     return {
-      text: "",
+      text: '',
       categories: [],
       tokens: []
     };
@@ -50,7 +50,7 @@ export default {
       }
 
       axios
-        .post("/classifications", { text })
+        .post('/classifications', { text })
         .then(({ data: { categories, tokens } }) => {
           this.$nextTick(function() {
             this.categories = categories;
