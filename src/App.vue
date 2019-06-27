@@ -45,7 +45,7 @@ export default {
 
   watch: {
     text: function(text) {
-      if (!this.text) {
+      if (!text) {
         return;
       }
 
