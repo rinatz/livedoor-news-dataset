@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import axios from 'axios';
-import { Component, Prop, PropSync, Watch, Vue, Emit } from 'vue-property-decorator';
+import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
 import CategoryChart from './components/CategoryChart.vue';
 import TokenTable from './components/TokenTable.vue';
 import { Category, Token, Classification } from './app';
