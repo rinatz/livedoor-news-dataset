@@ -19,12 +19,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Token } from '../app';
 import 'bulma/css/bulma.min.css';
-
-interface Token {
-  lemma: string;
-  tfidf: number;
-}
 
 @Component
 export default class TokenTable extends Vue {

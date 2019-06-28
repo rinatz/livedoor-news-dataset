@@ -2,11 +2,7 @@
 import { Chart } from 'chart.js';
 import { HorizontalBar, mixins } from 'vue-chartjs';
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
-
-interface Category {
-  name: string;
-  confidence: number;
-}
+import { Category } from '../app';
 
 @Component
 export default class CategoryChart extends Mixins(HorizontalBar, mixins.reactiveData) {

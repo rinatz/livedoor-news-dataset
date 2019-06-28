@@ -20,6 +20,7 @@ import axios from 'axios';
 import { Component, Prop, PropSync, Watch, Vue, Emit } from 'vue-property-decorator';
 import CategoryChart from './components/CategoryChart.vue';
 import TokenTable from './components/TokenTable.vue';
+import { Category, Token, Classification } from './app';
 import 'bulma/css/bulma.min.css';
 
 @Component({
@@ -30,8 +31,8 @@ import 'bulma/css/bulma.min.css';
 })
 export default class App extends Vue {
   private text: string = '';
-  private categories: any = [];
-  private tokens: any = [];
+  private categories: Category[] = [];
+  private tokens: Token[] = [];
 
   get showResult(): boolean {
     return !!this.text;
@@ -44,7 +45,7 @@ export default class App extends Vue {
     }
 
     axios
-      .post('/classifications', { text: newText })
+      .post<Classification>('/classifications', { text: newText })
       .then(({ data: { categories, tokens } }) => {
         this.$nextTick(function() {
           this.categories = categories;
