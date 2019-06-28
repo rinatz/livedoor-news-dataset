@@ -47,7 +47,7 @@ export default class App extends Vue {
     axios
       .post<Classification>('/classifications', { text: newText })
       .then(({ data: { categories, tokens } }) => {
-        this.$nextTick(function() {
+        this.$nextTick(() => {
           this.categories = categories;
           this.tokens = tokens;
         });
