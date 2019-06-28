@@ -1,72 +1,67 @@
-<script>
+<script lang="ts">
+import { Chart } from 'chart.js';
 import { HorizontalBar, mixins } from 'vue-chartjs';
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
-export default {
-  extends: HorizontalBar,
-  mixins: [mixins.reactiveData],
+interface Category {
+  name: string;
+  confidence: number;
+}
 
-  props: {
-    categories: {
-      type: Array,
-      required: false,
-      default: () => []
-    }
-  },
+@Component
+export default class CategoryChart extends Mixins(HorizontalBar, mixins.reactiveData) {
+  @Prop({ default: [] }) private categories!: Category[];
 
-  data: function() {
-    return {
-      options: {
-        scales: {
-          xAxes: [{ ticks: { min: 0, max: 100 } }]
-        }
-      }
-    };
-  },
+  private chartData: Chart.ChartData = { datasets: [] };
 
-  computed: {
-    backgroundColor: function() {
-      let length = this.categories.length - 3;
-
-      if (length < 0) {
-        length = 0;
-      }
-
-      return [
-        'rgba(0, 150, 136, 0.2)',
-        'rgba(63, 81, 181, 0.2)',
-        'rgba(233, 30, 99, 0.2)'
-      ].concat(Array(length).fill('rgba(158, 158, 158, 0.2)'));
+  private readonly options: Chart.ChartOptions = {
+    scales: {
+      xAxes: [{ ticks: { min: 0, max: 100 } }],
     },
-    borderColor: function() {
-      let length = this.categories.length - 3;
+  };
 
-      if (length < 0) {
-        length = 0;
-      }
+  get backgroundColor(): string[] {
+    let length = this.categories.length - 3;
 
-      return [
-        'rgba(0, 150, 136, 1)',
-        'rgba(63, 81, 181, 1)',
-        'rgba(233, 30, 99, 1)'
-      ].concat(Array(length).fill('rgba(158, 158, 158, 1)'));
+    if (length < 0) {
+      length = 0;
     }
-  },
 
-  watch: {
-    categories: function(categories) {
-      this.chartData = {
-        labels: categories.map(x => x.name),
-        datasets: [
-          {
-            label: '信頼性 [%]',
-            data: categories.map(x => x.confidence * 100),
-            borderWidth: 1,
-            backgroundColor: this.backgroundColor,
-            borderColor: this.borderColor
-          }
-        ]
-      };
-    }
+    return [
+      'rgba(0, 150, 136, 0.2)',
+      'rgba(63, 81, 181, 0.2)',
+      'rgba(233, 30, 99, 0.2)',
+    ].concat(Array(length).fill('rgba(158, 158, 158, 0.2)'));
   }
-};
+
+  get borderColor(): string[] {
+    let length = this.categories.length - 3;
+
+    if (length < 0) {
+      length = 0;
+    }
+
+    return [
+      'rgba(0, 150, 136, 1)',
+      'rgba(63, 81, 181, 1)',
+      'rgba(233, 30, 99, 1)',
+    ].concat(Array(length).fill('rgba(158, 158, 158, 1)'));
+  }
+
+  @Watch('categories')
+  public onCategoriesChanged(newCategories: Category[], oldCategories: Category[]): void {
+    this.chartData = {
+      labels: newCategories.map((x) => x.name),
+      datasets: [
+        {
+          label: '信頼性 [%]',
+          data: newCategories.map((x) => x.confidence * 100),
+          borderWidth: 1,
+          backgroundColor: this.backgroundColor,
+          borderColor: this.borderColor,
+        },
+      ],
+    };
+  }
+}
 </script>

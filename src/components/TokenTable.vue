@@ -17,10 +17,17 @@
   </table>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import 'bulma/css/bulma.min.css';
 
-export default {
-  props: ['tokens']
-};
+interface Token {
+  lemma: string;
+  tfidf: number;
+}
+
+@Component
+export default class TokenTable extends Vue {
+  @Prop({ default: [] }) private tokens!: Token[];
+}
 </script>

@@ -15,49 +15,42 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import axios from 'axios';
+import { Component, Prop, PropSync, Watch, Vue, Emit } from 'vue-property-decorator';
 import CategoryChart from './components/CategoryChart.vue';
 import TokenTable from './components/TokenTable.vue';
 import 'bulma/css/bulma.min.css';
 
-export default {
-  name: 'app',
-
+@Component({
   components: {
     CategoryChart,
-    TokenTable
+    TokenTable,
   },
+})
+export default class App extends Vue {
+  private text: string = '';
+  private categories: any = [];
+  private tokens: any = [];
 
-  data: function() {
-    return {
-      text: '',
-      categories: [],
-      tokens: []
-    };
-  },
-
-  computed: {
-    showResult: function() {
-      return this.text;
-    }
-  },
-
-  watch: {
-    text: function(text) {
-      if (!text) {
-        return;
-      }
-
-      axios
-        .post('/classifications', { text })
-        .then(({ data: { categories, tokens } }) => {
-          this.$nextTick(function() {
-            this.categories = categories;
-            this.tokens = tokens;
-          });
-        });
-    }
+  get showResult(): boolean {
+    return !!this.text;
   }
-};
+
+  @Watch('text')
+  public onTextInput(newText: string, oldText: string): void {
+    if (!newText) {
+      return;
+    }
+
+    axios
+      .post('/classifications', { text: newText })
+      .then(({ data: { categories, tokens } }) => {
+        this.$nextTick(function() {
+          this.categories = categories;
+          this.tokens = tokens;
+        });
+      });
+  }
+}
 </script>
