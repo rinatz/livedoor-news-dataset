@@ -12,26 +12,26 @@ from .japanese import MeCabTokenizer
 def get_classifications():
     return [
         # site_name, description
-        ("dokujo-tsushin", "女性"),
+        ("dokujo-tsushin", "独身女性"),
         ("it-life-hack", "IT"),
         ("kaden-channel", "家電"),
         ("livedoor-homme", "男性"),
         ("movie-enter", "映画"),
-        ("peachy", "グルメ"),
+        ("peachy", "女性"),
         ("smax", "モバイル"),
         ("sports-watch", "スポーツ"),
         ("topic-news", "ニュース"),
     ]
 
 
-def tokenize_japanese(text):
-    return MeCabTokenizer().tokenize(text)
-
-
 def load_directory_data(directory):
     texts = []
+    directory = Path(directory)
+    site_name = directory.name
+    file_paths = list(directory.glob("**/*.txt"))
+    mecab = MeCabTokenizer()
 
-    for file_path in Path(directory).glob("**/*.txt"):
+    for file_path in tqdm(file_paths, desc=site_name, ncols=100):
         if file_path.name == "LICENSE.txt":
             continue
 
@@ -40,7 +40,7 @@ def load_directory_data(directory):
             _wrote_at = next(txt)
 
             text = txt.read()
-            tokens = tokenize_japanese(text)
+            tokens = mecab.tokenize(text)
             texts.append(" ".join(tokens))
 
     return texts
@@ -58,7 +58,7 @@ def save_data(num_words=None):
     labels = []
     livedoor_news = Path(tar_path).parent
 
-    for label, (site_name, _description) in tqdm(enumerate(get_classifications())):
+    for label, (site_name, _description) in enumerate(get_classifications()):
         site_texts = load_directory_data(livedoor_news / "text" / site_name)
         texts += site_texts
         labels += [label] * len(site_texts)

@@ -1,7 +1,8 @@
 from marshmallow import Schema, fields
 import responder
 
-from .livedoor_news import tokenize_japanese, get_classifications, get_tokenizer
+from .japanese import MeCabTokenizer
+from .livedoor_news import get_classifications, get_tokenizer
 from .model import load_model
 
 api = responder.API(
@@ -51,6 +52,7 @@ class ClassificationSchema(Schema):
 async def startup():
     api.model = load_model()
     api.tokenizer = get_tokenizer()
+    api.mecab = MeCabTokenizer()
 
 
 @api.route("/classifications")
@@ -77,7 +79,7 @@ async def classifications(req, resp):
 
     req_body = await req.media()
     input_text = req_body["text"]
-    tokenized_text = tokenize_japanese(input_text)
+    tokenized_text = api.mecab.tokenize(input_text)
     texts = [" ".join(tokenized_text)]
     tfidf = api.tokenizer.texts_to_matrix(texts, mode="tfidf")
 
