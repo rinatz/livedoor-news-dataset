@@ -67,9 +67,9 @@ def save_data(num_words=None):
     tokenizer.fit_on_texts(texts)
 
     with livedoor_news.joinpath("livedoor_news.npz").open("wb") as npz:
-        np.savez(
-            npz, x=tokenizer.texts_to_matrix(texts, mode="tfidf"), y=np.array(labels)
-        )
+        x = tokenizer.texts_to_matrix(texts, mode="tfidf")
+        y = np.array(labels)
+        np.savez(npz, x=x, y=y)
 
     with livedoor_news.joinpath("livedoor_news_tokenizer.json").open("w") as json_file:
         json_file.write(tokenizer.to_json())
