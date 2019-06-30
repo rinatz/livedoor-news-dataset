@@ -29,7 +29,7 @@ class MeCabTokenizer:
 
             _surface, feature = node.split("\t")
             parts = feature.split(",")
-            pos, token = parts[0:4], parts[6]
+            pos, lemma = parts[0:4], parts[6]
 
             if pos[0] not in ["名詞", "動詞", "形容詞"]:
                 continue
@@ -37,6 +37,6 @@ class MeCabTokenizer:
             if pos[0:2] == ["名詞", "数詞"]:
                 continue
 
-            tokens.append(token)
+            tokens.append(lemma)
 
         return tokens
