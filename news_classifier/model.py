@@ -1,19 +1,37 @@
 import keras
-import keras_metrics as km
+import numpy as np
 import pandas as pd
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
 
 from .livedoor_news import load_data, get_classifications
 
 
-def metrics():
-    functions = ["acc"]
+class ClassificationReport(keras.callbacks.Callback):
+    def __init__(self, x_val, y_val, x_test, y_test, labels):
+        self.x_val = x_val
+        self.y_val = [labels[np.argmax(one_hot)] for one_hot in y_val]
+        self.x_test = x_test
+        self.y_test = [labels[np.argmax(one_hot)] for one_hot in y_test]
+        self.labels = labels
 
-    for label, _ in enumerate(get_classifications()):
-        functions.append(km.categorical_precision(label=label))
-        functions.append(km.categorical_recall(label=label))
-        functions.append(km.categorical_f1_score(label=label))
+    def on_epoch_end(self, epoch, logs=None):
+        y_pred = [
+            self.labels[np.argmax(one_hot)]
+            for one_hot in self.model.predict(self.x_val)
+        ]
+        report = classification_report(self.y_val, y_pred, labels=self.labels)
+        print("val_classification_report:")
+        print(report)
 
-    return functions
+    def on_train_end(self, logs=None):
+        y_pred = [
+            self.labels[np.argmax(one_hot)]
+            for one_hot in self.model.predict(self.x_test)
+        ]
+        report = classification_report(self.y_test, y_pred, labels=self.labels)
+        print("test_classification_report:")
+        print(report)
 
 
 def create_model(path="news_classifier_model.h5"):
@@ -21,6 +39,8 @@ def create_model(path="news_classifier_model.h5"):
 
     y_train = keras.utils.to_categorical(y_train)
     y_test = keras.utils.to_categorical(y_test)
+
+    x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1)
 
     input_shape = (x_train.shape[1],)
     units = y_train.shape[1]
@@ -34,22 +54,19 @@ def create_model(path="news_classifier_model.h5"):
             keras.layers.Dense(units, activation="softmax"),
         ]
     )
-    model.compile(
-        optimizer="rmsprop", loss="categorical_crossentropy", metrics=metrics()
-    )
+    model.compile(optimizer="rmsprop", loss="categorical_crossentropy", metrics=["acc"])
     model.summary()
-    model.fit(x_train, y_train, epochs=5, batch_size=16, validation_split=0.2)
 
-    test_metrics = model.evaluate(x_test, y_test)
-    print(f"test_loss: {test_metrics[0]:.4f}")
-    print(f"test_acc: {test_metrics[1]:.4f}")
+    labels = [x[1] for x in get_classifications()]
 
-    df = pd.DataFrame(
-        data=[test_metrics[i : i + 3] for i in range(2, len(test_metrics), 3)],
-        index=[description for _, description in get_classifications()],
-        columns=["test_precision", "test_recall", "test_f1_score"],
+    model.fit(
+        x_train,
+        y_train,
+        epochs=5,
+        batch_size=16,
+        validation_data=(x_val, y_val),
+        callbacks=[ClassificationReport(x_val, y_val, x_test, y_test, labels)],
     )
-    print(df)
 
     model.save(path)
 
@@ -57,11 +74,4 @@ def create_model(path="news_classifier_model.h5"):
 
 
 def load_model(path="news_classifier_model.h5"):
-    return keras.models.load_model(
-        path,
-        custom_objects={
-            "categorical_precision": km.categorical_precision(),
-            "categorical_recall": km.categorical_recall(),
-            "categorical_f1_score": km.categorical_f1_score(),
-        },
-    )
+    return keras.models.load_model(path)
