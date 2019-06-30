@@ -7,7 +7,7 @@ class MeCabTokenizer:
     def __init__(self, dic=None):
         if dic:
             if not Path(dic).exists():
-                raise RuntimeError(f"MeCab dictionary is not found: {dic}")
+                raise ValueError(f"MeCab dictionary is not found: {dic}")
         else:
             dic = "/usr/local/lib/mecab/dic/mecab-ipadic-neologd"
 
