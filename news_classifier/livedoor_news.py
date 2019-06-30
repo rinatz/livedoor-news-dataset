@@ -67,16 +67,17 @@ def save_data(num_words=None):
     tokenizer.fit_on_texts(texts)
 
     with livedoor_news.joinpath("livedoor_news.npz").open("wb") as npz:
-        np.savez(
-            npz, x=tokenizer.texts_to_matrix(texts, mode="tfidf"), y=np.array(labels)
-        )
+        x = tokenizer.texts_to_matrix(texts, mode="tfidf")
+        y = np.array(labels)
+        np.savez(npz, x, y)
 
     with livedoor_news.joinpath("livedoor_news_tokenizer.json").open("w") as json_file:
         json_file.write(tokenizer.to_json())
 
 
-def load_data(num_words=None, test_split=0.2):
-    path = Path("~/.keras/datasets/livedoor_news/livedoor_news.npz").expanduser()
+def load_data(path=None, num_words=None, test_split=0.2):
+    path = path or "~/.keras/datasets/livedoor_news/livedoor_news.npz"
+    path = Path(path).expanduser()
 
     if not path.exists() or num_words:
         save_data(num_words=num_words)
@@ -91,10 +92,9 @@ def load_data(num_words=None, test_split=0.2):
         return (x_train, y_train), (x_test, y_test)
 
 
-def get_tokenizer():
-    path = Path(
-        "~/.keras/datasets/livedoor_news/livedoor_news_tokenizer.json"
-    ).expanduser()
+def get_tokenizer(path=None):
+    path = path or "~/.keras/datasets/livedoor_news/livedoor_news_tokenizer.json"
+    path = Path(path).expanduser()
 
     if not path.exists():
         raise RuntimeError("load_data() must be invoked before taking tokenizer.")
