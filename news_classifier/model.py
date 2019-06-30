@@ -9,26 +9,23 @@ from .livedoor_news import load_data, get_classifications
 
 class ClassificationReport(keras.callbacks.Callback):
     def __init__(self, x_val, y_val, x_test, y_test, labels):
-        self.x_val = x_val
-        self.y_val = [labels[np.argmax(one_hot)] for one_hot in y_val]
-        self.x_test = x_test
-        self.y_test = [labels[np.argmax(one_hot)] for one_hot in y_test]
         self.labels = labels
+        self.x_val = x_val
+        self.y_val = self._binaries_to_labels(y_val)
+        self.x_test = x_test
+        self.y_test = self._binaries_to_labels(y_test)
+
+    def _binaries_to_labels(self, binaries):
+        return [self.labels[np.argmax(one_hot)] for one_hot in binaries]
 
     def on_epoch_end(self, epoch, logs=None):
-        y_pred = [
-            self.labels[np.argmax(one_hot)]
-            for one_hot in self.model.predict(self.x_val)
-        ]
+        y_pred = self._binaries_to_labels(self.model.predict(self.x_val))
         report = classification_report(self.y_val, y_pred, labels=self.labels)
         print("val_classification_report:")
         print(report)
 
     def on_train_end(self, logs=None):
-        y_pred = [
-            self.labels[np.argmax(one_hot)]
-            for one_hot in self.model.predict(self.x_test)
-        ]
+        y_pred = self._binaries_to_labels(self.model.predict(self.x_test))
         report = classification_report(self.y_test, y_pred, labels=self.labels)
         print("test_classification_report:")
         print(report)
