@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Token } from '../app';
+import { Token } from '../typings';
 import 'bulma/css/bulma.min.css';
 
 @Component
