@@ -54,7 +54,7 @@ def create_model(path="news_classifier_model.h5"):
     model.compile(optimizer="rmsprop", loss="categorical_crossentropy", metrics=["acc"])
     model.summary()
 
-    labels = [x[1] for x in get_classifications()]
+    labels = list(get_classifications().values())
 
     model.fit(
         x_train,

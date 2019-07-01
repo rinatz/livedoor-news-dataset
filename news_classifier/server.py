@@ -84,7 +84,7 @@ async def classifications(req, resp):
     tfidf = api.tokenizer.texts_to_matrix(texts, mode="tfidf")
 
     confidences = api.model.predict(tfidf)
-    names = map(lambda x: x[1], get_classifications())
+    names = get_classifications().values()
 
     word_tfidf = {}
 
