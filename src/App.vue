@@ -20,7 +20,7 @@ import axios from 'axios';
 import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
 import CategoryChart from './components/CategoryChart.vue';
 import TokenTable from './components/TokenTable.vue';
-import { Category, Token, Classification } from './typings';
+import { Category, Token, Classification } from './Classification';
 import 'bulma/css/bulma.min.css';
 
 @Component({
