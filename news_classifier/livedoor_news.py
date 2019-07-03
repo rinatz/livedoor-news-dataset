@@ -11,18 +11,20 @@ from .japanese import MeCabTokenizer
 
 
 def get_classifications():
-    return OrderedDict({
-        # site_name: description
-        "dokujo-tsushin": "独身女性",
-        "it-life-hack": "IT",
-        "kaden-channel": "家電",
-        "livedoor-homme": "男性",
-        "movie-enter": "映画",
-        "peachy": "女性",
-        "smax": "モバイル",
-        "sports-watch": "スポーツ",
-        "topic-news": "ニュース",
-    })
+    return OrderedDict(
+        {
+            # site_name: description
+            "dokujo-tsushin": "独身女性",
+            "it-life-hack": "IT",
+            "kaden-channel": "家電",
+            "livedoor-homme": "男性",
+            "movie-enter": "映画",
+            "peachy": "女性",
+            "smax": "モバイル",
+            "sports-watch": "スポーツ",
+            "topic-news": "ニュース",
+        }
+    )
 
 
 def load_directory_data(directory):
@@ -93,7 +95,9 @@ def load_data(test_split=0.2):
 
 
 def get_tokenizer():
-    path = Path("~/.keras/datasets/livedoor_news/livedoor_news_tokenizer.json").expanduser()
+    path = Path(
+        "~/.keras/datasets/livedoor_news/livedoor_news_tokenizer.json"
+    ).expanduser()
 
     if not path.exists():
         save_data()
