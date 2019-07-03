@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 
-from .livedoor_news import load_data, get_classifications
+from .livedoor_news import load_data, get_classifications, get_tokenizer
 
 
 class ClassificationReport(keras.callbacks.Callback):
@@ -33,8 +33,12 @@ class ClassificationReport(keras.callbacks.Callback):
 
 def create_model(path="news_classifier_model.h5"):
     (x_train, y_train), (x_test, y_test) = load_data()
+    tokenizer = get_tokenizer()
 
+    x_train = tokenizer.sequences_to_matrix(x_train, mode="tfidf")
     y_train = keras.utils.to_categorical(y_train)
+
+    x_test = tokenizer.sequences_to_matrix(x_test, mode="tfidf")
     y_test = keras.utils.to_categorical(y_test)
 
     x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1)

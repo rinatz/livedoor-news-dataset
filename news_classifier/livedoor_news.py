@@ -70,7 +70,7 @@ def save_data():
     tokenizer.fit_on_texts(texts)
 
     with livedoor_news.joinpath("livedoor_news.npz").open("wb") as npz:
-        x = tokenizer.texts_to_matrix(texts, mode="tfidf")
+        x = tokenizer.texts_to_sequences(texts)
         y = np.array(labels)
         np.savez(npz, x=x, y=y)
 
