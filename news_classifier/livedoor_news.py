@@ -47,7 +47,7 @@ def load_directory_data(directory):
     return texts
 
 
-def save_data(num_words=None):
+def save_data():
     tar_path = keras.utils.get_file(
         "ldcc-20140209.tar.gz",
         "https://www.rondhuit.com/download/ldcc-20140209.tar.gz",
@@ -64,7 +64,7 @@ def save_data(num_words=None):
         texts += site_texts
         labels += [label] * len(site_texts)
 
-    tokenizer = Tokenizer(num_words=num_words)
+    tokenizer = Tokenizer()
     tokenizer.fit_on_texts(texts)
 
     with livedoor_news.joinpath("livedoor_news.npz").open("wb") as npz:
@@ -76,12 +76,11 @@ def save_data(num_words=None):
         json_file.write(tokenizer.to_json())
 
 
-def load_data(path=None, num_words=None, test_split=0.2):
-    path = path or "~/.keras/datasets/livedoor_news/livedoor_news.npz"
-    path = Path(path).expanduser()
+def load_data(test_split=0.2):
+    path = Path("~/.keras/datasets/livedoor_news/livedoor_news.npz").expanduser()
 
-    if not path.exists() or num_words:
-        save_data(num_words=num_words)
+    if not path.exists():
+        save_data()
 
     with path.open("rb") as npz:
         data = np.load(npz)
@@ -93,12 +92,11 @@ def load_data(path=None, num_words=None, test_split=0.2):
         return (x_train, y_train), (x_test, y_test)
 
 
-def get_tokenizer(path=None):
-    path = path or "~/.keras/datasets/livedoor_news/livedoor_news_tokenizer.json"
-    path = Path(path).expanduser()
+def get_tokenizer():
+    path = Path("~/.keras/datasets/livedoor_news/livedoor_news_tokenizer.json").expanduser()
 
     if not path.exists():
-        raise RuntimeError("load_data() must be invoked before taking tokenizer.")
+        save_data()
 
     with path.open("r") as json_file:
         return tokenizer_from_json(json_file.read())
