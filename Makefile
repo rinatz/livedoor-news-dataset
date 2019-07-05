@@ -3,6 +3,10 @@ init:
 	pipenv sync
 	pipenv run init
 
+.PHONY: save
+save:
+	pipenv run save
+
 .PHONY: create
 create:
 	pipenv run create
