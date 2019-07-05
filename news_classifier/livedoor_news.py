@@ -31,19 +31,17 @@ def load_directory_data(directory):
     texts = []
     directory = Path(directory)
     site_name = directory.name
-    file_paths = list(directory.glob("**/*.txt"))
+    file_paths = list(
+        filter(lambda x: x.name != "LICENSE.txt", directory.glob("**/*.txt"))
+    )
     mecab = MeCabTokenizer()
 
     for file_path in tqdm(file_paths, desc=site_name, ncols=100):
-        if file_path.name == "LICENSE.txt":
-            continue
-
         with file_path.open() as txt:
             _site_url = next(txt)
             _wrote_at = next(txt)
 
-            text = txt.read()
-            tokens = mecab.tokenize(text)
+            tokens = mecab.tokenize(txt.read())
             texts.append(" ".join(tokens))
 
     return texts
