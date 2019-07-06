@@ -33,7 +33,7 @@ class MeCabTokenizer:
             if pos[0] not in ["名詞", "動詞", "形容詞"]:
                 continue
 
-            if pos[0:2] == ["名詞", "数詞"]:
+            if pos[0:2] == ["名詞", "数"]:
                 continue
 
             tokens.append(lemma)
