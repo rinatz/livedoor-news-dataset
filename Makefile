@@ -1,6 +1,6 @@
 .PHONY: init
 init:
-	pipenv sync
+	pipenv sync -d
 	pipenv run init
 
 .PHONY: save
