@@ -31,7 +31,23 @@ class ClassificationReport(keras.callbacks.Callback):
         print(report)
 
 
-def create_model(path="news_classifier_model.h5"):
+def build_model(x, y):
+    model = keras.Sequential(
+        [
+            keras.layers.Dense(64, activation="relu", input_shape=(x.shape[1],)),
+            keras.layers.Dropout(0.5),
+            keras.layers.Dense(64, activation="relu"),
+            keras.layers.Dropout(0.5),
+            keras.layers.Dense(y.shape[1], activation="softmax"),
+        ]
+    )
+    model.compile(optimizer="rmsprop", loss="categorical_crossentropy", metrics=["acc"])
+    model.summary()
+
+    return model
+
+
+def fit_model(path="news_classifier_model.h5"):
     (x_train, y_train), (x_test, y_test) = load_data()
     tokenizer = get_tokenizer()
 
@@ -43,21 +59,7 @@ def create_model(path="news_classifier_model.h5"):
 
     x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1)
 
-    input_shape = (x_train.shape[1],)
-    units = y_train.shape[1]
-
-    model = keras.Sequential(
-        [
-            keras.layers.Dense(64, activation="relu", input_shape=input_shape),
-            keras.layers.Dropout(0.5),
-            keras.layers.Dense(64, activation="relu"),
-            keras.layers.Dropout(0.5),
-            keras.layers.Dense(units, activation="softmax"),
-        ]
-    )
-    model.compile(optimizer="rmsprop", loss="categorical_crossentropy", metrics=["acc"])
-    model.summary()
-
+    model = build_model(x_train, y_train)
     labels = list(get_classifications().values())
 
     model.fit(
@@ -70,8 +72,6 @@ def create_model(path="news_classifier_model.h5"):
     )
 
     model.save(path)
-
-    return model
 
 
 def load_model(path="news_classifier_model.h5"):

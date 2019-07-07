@@ -7,9 +7,9 @@ init:
 save:
 	pipenv run save
 
-.PHONY: create
-create:
-	pipenv run create
+.PHONY: fit
+fit:
+	pipenv run fit
 
 .PHONY: build
 build:

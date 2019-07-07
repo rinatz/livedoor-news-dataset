@@ -31,6 +31,6 @@ allow_prereleases = true
 [scripts]
 init = "npm install"
 save = "python -m news_classifier save"
-create = "python -m news_classifier create"
+fit = "python -m news_classifier fit"
 build = "npm run build"
 serve = "python -m news_classifier serve"

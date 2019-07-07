@@ -2,7 +2,7 @@
 
 Usage:
     news_classifier save
-    news_classifier create
+    news_classifier fit
     news_classifier serve
 
 Options:
@@ -13,7 +13,7 @@ import sys
 from docopt import docopt
 
 from .livedoor_news import save_data
-from .model import create_model
+from .model import fit_model
 from .server import api
 
 
@@ -23,8 +23,8 @@ def main(argv=None):
 
     if args["save"]:
         save_data()
-    elif args["create"]:
-        create_model()
+    elif args["fit"]:
+        fit_model()
     elif args["serve"]:
         api.run(address="0.0.0.0", port=8000)
 
