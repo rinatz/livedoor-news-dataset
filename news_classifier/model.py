@@ -17,15 +17,17 @@ class ClassificationReport(keras.callbacks.Callback):
     def _one_hot_matrix_to_labels(self, matrix):
         return [self.labels[np.argmax(one_hot)] for one_hot in matrix]
 
+    def _classification_report(self, x, y):
+        y_pred = self._one_hot_matrix_to_labels(self.model.predict(x))
+        return classification_report(y, y_pred, labels=self.labels)
+
     def on_epoch_end(self, epoch, logs=None):
-        y_pred = self._one_hot_matrix_to_labels(self.model.predict(self.x_val))
-        report = classification_report(self.y_val, y_pred, labels=self.labels)
+        report = self._classification_report(self.x_val, self.y_val)
         print("val_classification_report:")
         print(report)
 
     def on_train_end(self, logs=None):
-        y_pred = self._one_hot_matrix_to_labels(self.model.predict(self.x_test))
-        report = classification_report(self.y_test, y_pred, labels=self.labels)
+        report = self._classification_report(self.x_test, self.y_test)
         print("test_classification_report:")
         print(report)
 
