@@ -18,11 +18,11 @@
     "vue-property-decorator": "^8.1.0"
   },
   "devDependencies": {
-    "@types/chart.js": "^2.7.54",
-    "@vue/cli-plugin-babel": "^3.8.0",
-    "@vue/cli-plugin-typescript": "^3.8.0",
-    "@vue/cli-service": "^3.8.0",
-    "typescript": "^3.4.3",
+    "@types/chart.js": "^2.7.55",
+    "@vue/cli-plugin-babel": "^3.9.2",
+    "@vue/cli-plugin-typescript": "^3.9.0",
+    "@vue/cli-service": "^3.9.2",
+    "typescript": "^3.5.3",
     "vue-template-compiler": "^2.6.10"
   }
 }
