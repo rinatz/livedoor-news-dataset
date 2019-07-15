@@ -25,9 +25,6 @@ tqdm = "==4.32.2"
 [requires]
 python_version = "3.7"
 
-[pipenv]
-allow_prereleases = true
-
 [scripts]
 init = "npm install"
 save = "python -m news_classifier save"
