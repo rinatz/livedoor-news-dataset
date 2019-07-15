@@ -30,16 +30,16 @@ import 'bulma/css/bulma.min.css';
   },
 })
 export default class App extends Vue {
-  private text: string = '';
+  private text = '';
   private categories: Category[] = [];
   private tokens: Token[] = [];
 
-  get showResult(): boolean {
+  get showResult() {
     return !!this.text;
   }
 
   @Watch('text')
-  public onTextInput(newText: string, oldText: string): void {
+  public onTextInput(newText: string, oldText: string) {
     if (!newText) {
       return;
     }

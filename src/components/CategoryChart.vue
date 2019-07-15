@@ -16,7 +16,7 @@ export default class CategoryChart extends Mixins(HorizontalBar, mixins.reactive
     },
   };
 
-  get backgroundColor(): string[] {
+  get backgroundColor() {
     let length = this.categories.length - 3;
 
     if (length < 0) {
@@ -30,7 +30,7 @@ export default class CategoryChart extends Mixins(HorizontalBar, mixins.reactive
     ].concat(Array(length).fill('rgba(158, 158, 158, 0.2)'));
   }
 
-  get borderColor(): string[] {
+  get borderColor() {
     let length = this.categories.length - 3;
 
     if (length < 0) {
@@ -45,7 +45,7 @@ export default class CategoryChart extends Mixins(HorizontalBar, mixins.reactive
   }
 
   @Watch('categories')
-  public onCategoriesChanged(newCategories: Category[], oldCategories: Category[]): void {
+  public onCategoriesChanged(newCategories: Category[], oldCategories: Category[]) {
     this.chartData = {
       labels: newCategories.map((x) => x.name),
       datasets: [
