@@ -1,4 +1,6 @@
-from marshmallow import Schema, fields
+from json.decoder import JSONDecodeError
+
+from marshmallow import Schema, fields, ValidationError
 import responder
 
 from .japanese import MeCabTokenizer
@@ -48,6 +50,13 @@ class ClassificationSchema(Schema):
     )
 
 
+@api.schema("Problem")
+class ProblemSchema(Schema):
+    title = fields.Str(required=True, description="エラーに関するサマリ")
+    status = fields.Int(required=True, description="HTTP ステータスコード")
+    detail = fields.Dict(required=True, description="エラーに関する詳細")
+
+
 @api.on_event("startup")
 async def startup():
     api.model = load_model()
@@ -75,10 +84,39 @@ async def classifications(req, resp):
             application/json:
               schema:
                 $ref: "#/components/schemas/Classification"
+        "400":
+          description: リクエストが不正
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
     """
 
-    req_body = await req.media()
-    input_text = req_body["text"]
+    try:
+        req_body = await req.media()
+    except JSONDecodeError:
+        problem = ProblemSchema().dump(
+            {
+                "title": "Invalid body",
+                "status": 400,
+                "detail": "Request body requires 'text' field in JSON",
+            }
+        )
+        resp.media = problem.data
+        resp.status_code = api.status_codes.HTTP_400
+        return
+
+    doc = DocumentSchema().load(req_body)
+
+    if doc.errors:
+        problem = ProblemSchema().dump(
+            {"title": "Validation error", "status": 400, "detail": doc.errors}
+        )
+        resp.media = problem.data
+        resp.status_code = api.status_codes.HTTP_400
+        return
+
+    input_text = doc.data["text"]
     tokenized_text = api.mecab.tokenize(input_text)
     texts = [" ".join(tokenized_text)]
     tfidf = api.tokenizer.texts_to_matrix(texts, mode="tfidf")
