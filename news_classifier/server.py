@@ -95,7 +95,7 @@ async def classifications(req, resp):
         except KeyError:
             word_tfidf[word] = 0.0
 
-    resp.media = ClassificationSchema().dump(
+    classifications = ClassificationSchema().dump(
         {
             "text": input_text,
             "categories": sorted(
@@ -113,3 +113,5 @@ async def classifications(req, resp):
             ),
         }
     )
+
+    resp.media = classifications.data
