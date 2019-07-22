@@ -4,7 +4,7 @@
       <tr>
         <th>ランク</th>
         <th>ワード</th>
-        <th>TF-IDF</th>
+        <th>tf-idf</th>
       </tr>
     </thead>
     <tbody>
