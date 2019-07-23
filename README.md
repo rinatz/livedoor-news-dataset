@@ -25,7 +25,7 @@ $ pipenv run init
 コーパスを使ってディープラーニングでモデルを作成します。
 
 ```shell
-$ pipenv run create
+$ pipenv run fit
 ```
 
 ## Web ページの作成
