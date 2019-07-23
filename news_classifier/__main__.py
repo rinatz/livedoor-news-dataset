@@ -18,7 +18,6 @@ from .server import api
 
 
 def main(argv=None):
-    argv = argv or sys.argv[1:]
     args = docopt(__doc__, argv=argv)
 
     if args["save"]:
