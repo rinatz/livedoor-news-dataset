@@ -1,20 +1,11 @@
 .PHONY: init
 init:
-	pipenv sync -d
-	pipenv run init
-
-.PHONY: save
-save:
-	pipenv run save
+	poetry install --no-root
 
 .PHONY: fit
 fit:
-	pipenv run fit
+	poetry run python -m news_classifier
 
-.PHONY: build
-build:
-	pipenv run build
-
-.PHONY: serve
-serve:
-	pipenv run serve
+.PHONY: run
+run:
+	streamlit run main.py

@@ -1,12 +1,15 @@
-import keras
 import numpy as np
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
+import tensorflow as tf
 
-from .livedoor_news import load_data, get_classifications, get_tokenizer
+from .livedoor_news import load_data, get_classes, get_tokenizer
 
 
-class ClassificationReport(keras.callbacks.Callback):
+DEFAULT_MODEL_PATH = "news_classifier.h5"
+
+
+class ClassificationReport(tf.keras.callbacks.Callback):
     def __init__(self, x_val, y_val, x_test, y_test, labels):
         self.labels = labels
         self.x_val = x_val
@@ -33,13 +36,13 @@ class ClassificationReport(keras.callbacks.Callback):
 
 
 def build_model(num_words, num_labels):
-    model = keras.Sequential(
+    model = tf.keras.Sequential(
         [
-            keras.layers.Dense(64, activation="relu", input_shape=(num_words,)),
-            keras.layers.Dropout(0.5),
-            keras.layers.Dense(64, activation="relu"),
-            keras.layers.Dropout(0.5),
-            keras.layers.Dense(num_labels, activation="softmax"),
+            tf.keras.layers.Dense(64, activation="relu", input_shape=(num_words,)),
+            tf.keras.layers.Dropout(0.5),
+            tf.keras.layers.Dense(64, activation="relu"),
+            tf.keras.layers.Dropout(0.5),
+            tf.keras.layers.Dense(num_labels, activation="softmax"),
         ]
     )
     model.compile(optimizer="rmsprop", loss="categorical_crossentropy", metrics=["acc"])
@@ -48,14 +51,14 @@ def build_model(num_words, num_labels):
     return model
 
 
-def fit_model(path="news_classifier_model.h5"):
+def fit_model(path=DEFAULT_MODEL_PATH):
     (x_train, y_train), (x_test, y_test) = load_data()
     tokenizer = get_tokenizer()
 
     x_train = tokenizer.sequences_to_matrix(x_train, mode="tfidf")
-    y_train = keras.utils.to_categorical(y_train)
+    y_train = tf.keras.utils.to_categorical(y_train)
     x_test = tokenizer.sequences_to_matrix(x_test, mode="tfidf")
-    y_test = keras.utils.to_categorical(y_test)
+    y_test = tf.keras.utils.to_categorical(y_test)
 
     x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1)
 
@@ -73,7 +76,7 @@ def fit_model(path="news_classifier_model.h5"):
                 y_val,
                 x_test,
                 y_test,
-                labels=list(get_classifications().values()),
+                labels=list(get_classes().values()),
             )
         ],
     )
@@ -81,5 +84,5 @@ def fit_model(path="news_classifier_model.h5"):
     model.save(path)
 
 
-def load_model(path="news_classifier_model.h5"):
-    return keras.models.load_model(path)
+def load_model(path=DEFAULT_MODEL_PATH):
+    return tf.keras.models.load_model(path)

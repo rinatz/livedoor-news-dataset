@@ -1,10 +1,6 @@
-# news_classifier
+# ニュースの分類器
 
 [Livedoor ニュースコーパス] を使ったニュースの分類器のリファレンス実装です。
-
-<div align="center">
-    <img src="screenshot.png" />
-</div>
 
 ## 必要なもの
 
@@ -16,8 +12,7 @@
 ## 準備
 
 ```shell
-$ pipenv sync
-$ pipenv run init
+$ make init
 ```
 
 ## モデルの作成
@@ -25,25 +20,17 @@ $ pipenv run init
 コーパスを使ってディープラーニングでモデルを作成します。
 
 ```shell
-$ pipenv run fit
-```
-
-## Web ページの作成
-
-Vue.js で書かれたソースコードをビルドして Web ページを作成します。
-
-```shell
-$ pipenv run build
+$ make fit
 ```
 
 ## 分類器を試す
 
-サーバを起動します。
+Web ページを開きます。
 
 ```shell
-$ pipenv run serve
+$ make run
 ```
 
-http://localhost:8000 にアクセスすると Web ページが表示されますので、適当な文章を入力して下さい。下部に判定結果がグラフで表示されます。
+http://localhost:8501 にアクセスすると Web ページが表示されますので、適当な文章を入力して下さい。下部に判定結果がグラフで表示されます。
 
 [Livedoor ニュースコーパス]: http://www.rondhuit.com/download.html#ldcc

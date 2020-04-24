@@ -38,4 +38,4 @@ class MeCabTokenizer:
 
             tokens.append(lemma)
 
-        return tokens
+        return " ".join(tokens)
