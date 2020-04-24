@@ -4,10 +4,10 @@
 
 ## 必要なもの
 
-- Python 3.7
-- Pipenv
+- Python 3.6 以上
+- Poetry
 - MeCab
-- NEologd (MeCab 辞書)
+- NEologd
 
 ## 準備
 
