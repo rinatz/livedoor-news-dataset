@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "text_classifier"
+name = "news_classifier"
 version = "0.1.0"
 description = "Classify livedoor news by genres"
 authors = ["Ida Kenichiro <ida.kenichiro@gmail.com>"]
