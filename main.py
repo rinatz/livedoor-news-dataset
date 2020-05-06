@@ -1,7 +1,7 @@
 import streamlit as st
 from bokeh.plotting import figure
 
-from news_classifier import preprocessing, livedoor_news, training
+from news_classifier import preprocessing, livedoor_news, nn
 
 
 def main():
@@ -9,7 +9,7 @@ def main():
 
     mecab = preprocessing.MeCabTokenizer()
     tokenizer = livedoor_news.get_tokenizer()
-    model = training.load_model()
+    model = nn.load_model("news_classifier.h5")
 
     text = st.text_area("文章を入力してください。")
 
