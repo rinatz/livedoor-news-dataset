@@ -43,7 +43,9 @@ class DeepNeuralNetwork:
                 tf.keras.layers.Dense(num_labels, activation="softmax"),
             ]
         )
-        model.compile(optimizer="rmsprop", loss="categorical_crossentropy", metrics=["acc"])
+        model.compile(
+            optimizer="rmsprop", loss="categorical_crossentropy", metrics=["acc"]
+        )
 
         self.model = model
         self.tokenizer = tokenizer
@@ -61,11 +63,7 @@ class DeepNeuralNetwork:
             validation_data=(x_val, y_val),
             callbacks=[
                 ClassificationReport(
-                    x_val,
-                    y_val,
-                    x_test,
-                    y_test,
-                    labels=list(get_classes().values()),
+                    x_val, y_val, x_test, y_test, labels=list(get_classes().values()),
                 )
             ],
         )

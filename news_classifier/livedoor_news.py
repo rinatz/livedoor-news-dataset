@@ -10,18 +10,20 @@ from .preprocessing import MeCabTokenizer
 
 
 def get_classes():
-    return OrderedDict({
-        # site_name: description
-        "dokujo-tsushin": "独身女性",
-        "it-life-hack": "IT",
-        "kaden-channel": "家電",
-        "livedoor-homme": "男性",
-        "movie-enter": "映画",
-        "peachy": "女性",
-        "smax": "モバイル",
-        "sports-watch": "スポーツ",
-        "topic-news": "ニュース",
-    })
+    return OrderedDict(
+        {
+            # site_name: description
+            "dokujo-tsushin": "独身女性",
+            "it-life-hack": "IT",
+            "kaden-channel": "家電",
+            "livedoor-homme": "男性",
+            "movie-enter": "映画",
+            "peachy": "女性",
+            "smax": "モバイル",
+            "sports-watch": "スポーツ",
+            "topic-news": "ニュース",
+        }
+    )
 
 
 def load_directory_data(directory):
