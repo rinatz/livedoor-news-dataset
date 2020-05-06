@@ -9,7 +9,8 @@ Arguments:
     fit     Fit a model
 
 Options:
-    -o FILE --output=FILE   Path to output file to store model [default: news_classifier.h5]
+    -o FILE --output=FILE       Path to output file to store model [default: news_classifier.h5]
+    -m METHOD --method=METHOD   Choose a machine learning algorithm [default: dnn]
 """
 
 from docopt import docopt
@@ -25,20 +26,21 @@ def main(argv=None):
     if args["get"]:
         save_data()
     elif args["fit"]:
-        (x_train, y_train), (x_test, y_test) = load_data()
-        tokenizer = get_tokenizer()
+        if args["--method"] == "dnn":
+            (x_train, y_train), (x_test, y_test) = load_data()
+            tokenizer = get_tokenizer()
 
-        x_train = tokenizer.sequences_to_matrix(x_train, mode="tfidf")
-        y_train = tf.keras.utils.to_categorical(y_train)
-        x_test = tokenizer.sequences_to_matrix(x_test, mode="tfidf")
-        y_test = tf.keras.utils.to_categorical(y_test)
+            x_train = tokenizer.sequences_to_matrix(x_train, mode="tfidf")
+            y_train = tf.keras.utils.to_categorical(y_train)
+            x_test = tokenizer.sequences_to_matrix(x_test, mode="tfidf")
+            y_test = tf.keras.utils.to_categorical(y_test)
 
-        dnn = DeepNeuralNetwork(
-            num_words=x_train.shape[1], num_labels=y_train.shape[1], tokenizer=tokenizer
-        )
+            dnn = DeepNeuralNetwork(
+                num_words=x_train.shape[1], num_labels=y_train.shape[1], tokenizer=tokenizer
+            )
 
-        dnn.fit(x_train, y_train, x_test, y_test)
-        dnn.save(args["--output"])
+            dnn.fit(x_train, y_train, x_test, y_test)
+            dnn.save(args["--output"])
 
 
 if __name__ == "__main__":
