@@ -26,6 +26,7 @@ CATEGORIES = OrderedDict(
         "topic-news": "ニュース",
     }
 )
+LABELS = list(CATEGORIES.values())
 
 
 def load_directory_data(directory, mecab):
@@ -55,22 +56,23 @@ def save_data():
     )
 
     texts = []
-    labels = []
+    indices = []
     livedoor = Path(tar_path).parent
     mecab = MeCabTokenizer()
 
-    for label, site_name in enumerate(CATEGORIES):
+    for index, site_name in enumerate(CATEGORIES):
         directory = livedoor / "text" / site_name
         site_texts = load_directory_data(directory, mecab)
         texts += site_texts
-        labels += [label] * len(site_texts)
+        indices += [index] * len(site_texts)
 
     tokenizer = tf.keras.preprocessing.text.Tokenizer()
     tokenizer.fit_on_texts(texts)
 
+    x = tokenizer.texts_to_sequences(texts)
+    y = np.array(indices)
+
     with DATA_PATH.open("wb") as npz:
-        x = tokenizer.texts_to_sequences(texts)
-        y = np.array(labels)
         np.savez(npz, x=x, y=y)
 
     with TOKENIZER_PATH.open("w") as json_file:

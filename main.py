@@ -16,13 +16,13 @@ def main():
     if text:
         texts = [mecab.tokenize(text)]
         tfidf = tokenizer.texts_to_matrix(texts, mode="tfidf")
-        confidences = model.predict(tfidf)
+        confidences = model.predict(tfidf)[0]
 
-        categories = list(livedoor.CATEGORIES.values())
-        sorted_categories = sorted(categories, key=lambda x: confidences[0][categories.index(x)])
+        labels = livedoor.LABELS
+        sorted_labels = sorted(labels, key=lambda x: confidences[labels.index(x)])
 
-        chart = figure(y_range=sorted_categories, title="信頼性 [%]")
-        chart.hbar(y=categories, right=confidences[0])
+        chart = figure(y_range=sorted_labels, title="信頼性 [%]")
+        chart.hbar(y=labels, right=confidences)
 
         st.bokeh_chart(chart)
 

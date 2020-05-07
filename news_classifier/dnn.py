@@ -50,7 +50,6 @@ def build_model(num_words=1, num_labels=1):
 def fit_model():
     (x_train, y_train), (x_test, y_test) = livedoor.load_data()
     tokenizer = livedoor.get_tokenizer()
-    labels = list(livedoor.CATEGORIES.values())
 
     x_train = tokenizer.sequences_to_matrix(x_train, mode="tfidf")
     y_train = tf.keras.utils.to_categorical(y_train)
@@ -58,6 +57,7 @@ def fit_model():
     y_test = tf.keras.utils.to_categorical(y_test)
 
     x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1)
+    report = ClassificationReport(x_val, y_val, x_test, y_test, labels=livedoor.LABELS)
 
     model = tf.keras.wrappers.scikit_learn.KerasClassifier(
         build_model,
@@ -66,7 +66,7 @@ def fit_model():
         epochs=5,
         batch_size=16,
         validation_data=(x_val, y_val),
-        callbacks=[ClassificationReport(x_val, y_val, x_test, y_test, labels=labels)],
+        callbacks=[report],
     )
 
     model.fit(x_train, y_train)
