@@ -28,7 +28,7 @@ $ make fit
 Web ページを開きます。
 
 ```shell
-$ make run
+$ make serve
 ```
 
 http://localhost:8501 にアクセスすると Web ページが表示されますので、適当な文章を入力して下さい。下部に判定結果がグラフで表示されます。

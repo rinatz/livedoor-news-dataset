@@ -10,6 +10,6 @@ get:
 fit:
 	poetry run python -m news_classifier fit
 
-.PHONY: run
-run:
+.PHONY: serve
+serve:
 	poetry run streamlit run main.py

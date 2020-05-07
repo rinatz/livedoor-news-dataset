@@ -1,15 +1,15 @@
 import streamlit as st
 from bokeh.plotting import figure
 
-from news_classifier import preprocessing, livedoor_news, nn
+from news_classifier import preprocessing, livedoor, dnn
 
 
 def main():
     st.title("ニュースの分類器")
 
     mecab = preprocessing.MeCabTokenizer()
-    tokenizer = livedoor_news.get_tokenizer()
-    model = nn.load_model("news_classifier.h5")
+    tokenizer = livedoor.get_tokenizer()
+    model = dnn.load_model("model.h5")
 
     text = st.text_area("文章を入力してください。")
 
@@ -18,12 +18,13 @@ def main():
         tfidf = tokenizer.texts_to_matrix(texts, mode="tfidf")
         confidences = model.predict(tfidf)
 
-        classes = list(livedoor_news.get_classes().values())
-        sorted_classes = sorted(classes, key=lambda x: confidences[0][classes.index(x)])
+        categories = list(livedoor.CATEGORIES.values())
+        sorted_categories = sorted(categories, key=lambda x: confidences[0][categories.index(x)])
 
-        p = figure(y_range=sorted_classes, title="信頼性 [%]")
-        p.hbar(y=classes, right=confidences[0])
-        st.bokeh_chart(p)
+        chart = figure(y_range=sorted_categories, title="信頼性 [%]")
+        chart.hbar(y=categories, right=confidences[0])
+
+        st.bokeh_chart(chart)
 
 
 if __name__ == "__main__":

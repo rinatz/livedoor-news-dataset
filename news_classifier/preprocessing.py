@@ -3,21 +3,18 @@ from pathlib import Path
 import MeCab
 
 
+MECAB_DIC_PATH = Path("/usr/local/lib/mecab/dic/mecab-ipadic-neologd")
+
+
 class MeCabTokenizer:
-    def __init__(self, dic=None):
-        if dic:
-            if not Path(dic).exists():
-                raise ValueError(f"MeCab dictionary is not found: {dic}")
-        else:
-            dic = "/usr/local/lib/mecab/dic/mecab-ipadic-neologd"
+    def __init__(self):
+        if not MECAB_DIC_PATH.exists():
+            raise RuntimeError(
+                "MeCabTokenizer requires NEologd: "
+                "https://github.com/neologd/mecab-ipadic-neologd"
+            )
 
-            if not Path(dic).exists():
-                raise RuntimeError(
-                    "MeCabTokenizer requires NEologd: "
-                    "https://github.com/neologd/mecab-ipadic-neologd"
-                )
-
-        self._mecab = MeCab.Tagger(f"-d {dic}")
+        self._mecab = MeCab.Tagger(f"-d {MECAB_DIC_PATH}")
 
     def tokenize(self, text):
         tokens = []
