@@ -3,7 +3,7 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 
-from . import livedoor
+import dataset
 
 
 class ClassificationReport(tf.keras.callbacks.Callback):
@@ -23,12 +23,12 @@ class ClassificationReport(tf.keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         report = self._classification_report(self.x_val, self.y_val)
-        print("val_classification_report:")
+        print("\n\nval_classification_report:")
         print(report)
 
     def on_train_end(self, logs=None):
         report = self._classification_report(self.x_test, self.y_test)
-        print("test_classification_report:")
+        print("\n\ntest_classification_report:")
         print(report)
 
 
@@ -47,17 +47,9 @@ def build_model(num_words=1, num_labels=1):
     return model
 
 
-def fit_model():
-    (x_train, y_train), (x_test, y_test) = livedoor.load_data()
-    tokenizer = livedoor.get_tokenizer()
-
-    x_train = tokenizer.sequences_to_matrix(x_train, mode="tfidf")
-    y_train = tf.keras.utils.to_categorical(y_train)
-    x_test = tokenizer.sequences_to_matrix(x_test, mode="tfidf")
-    y_test = tf.keras.utils.to_categorical(y_test)
-
+def fit_model(x_train, y_train, x_test, y_test):
     x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1)
-    report = ClassificationReport(x_val, y_val, x_test, y_test, labels=livedoor.LABELS)
+    report = ClassificationReport(x_val, y_val, x_test, y_test, labels=dataset.LABELS)
 
     model = tf.keras.wrappers.scikit_learn.KerasClassifier(
         build_model,

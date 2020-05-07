@@ -2,14 +2,14 @@
 init:
 	poetry install --no-root
 
-.PHONY: get
-get:
-	poetry run python -m news_classifier get
+.PHONY: dataset
+dataset:
+	poetry run python dataset.py
 
-.PHONY: fit
-fit:
-	poetry run python -m news_classifier fit
+.PHONY: train
+train:
+	poetry run python train.py
 
 .PHONY: serve
 serve:
-	poetry run streamlit run main.py
+	poetry run streamlit run app.py
