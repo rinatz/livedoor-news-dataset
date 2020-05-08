@@ -1,33 +1,26 @@
-import numpy as np
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 
-import dataset
+from . import utils
 
 
-class ClassificationReport(tf.keras.callbacks.Callback):
-    def __init__(self, x_val, y_val, x_test, y_test, labels):
-        self.labels = labels
+class ClassificationLogger(tf.keras.callbacks.Callback):
+    def __init__(self, x_val, y_val, x_test, y_test):
         self.x_val = x_val
-        self.y_val = self._categorical_to_labels(y_val)
+        self.y_val = utils.categorical_to_labels(y_val)
         self.x_test = x_test
-        self.y_test = self._categorical_to_labels(y_test)
-
-    def _categorical_to_labels(self, matrix):
-        return [self.labels[np.argmax(categorical)] for categorical in matrix]
-
-    def _classification_report(self, x, y):
-        y_pred = self._categorical_to_labels(self.model.predict(x))
-        return classification_report(y, y_pred, labels=self.labels)
+        self.y_test = utils.categorical_to_labels(y_test)
 
     def on_epoch_end(self, epoch, logs=None):
-        report = self._classification_report(self.x_val, self.y_val)
+        y_pred = utils.categorical_to_labels(self.model.predict(self.x_val))
+        report = classification_report(y_pred, self.y_val)
         print("\n\nval_classification_report:")
         print(report)
 
     def on_train_end(self, logs=None):
-        report = self._classification_report(self.x_test, self.y_test)
+        y_pred = utils.categorical_to_labels(self.model.predict(self.x_test))
+        report = classification_report(y_pred, self.y_test)
         print("\n\ntest_classification_report:")
         print(report)
 
@@ -49,7 +42,7 @@ def build_model(num_words=1, num_labels=1):
 
 def fit_model(x_train, y_train, x_test, y_test):
     x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1)
-    report = ClassificationReport(x_val, y_val, x_test, y_test, labels=dataset.LABELS)
+    logger = ClassificationLogger(x_val, y_val, x_test, y_test)
 
     model = tf.keras.wrappers.scikit_learn.KerasClassifier(
         build_model,
@@ -58,7 +51,7 @@ def fit_model(x_train, y_train, x_test, y_test):
         epochs=5,
         batch_size=16,
         validation_data=(x_val, y_val),
-        callbacks=[report],
+        callbacks=[logger],
     )
 
     model.fit(x_train, y_train)
