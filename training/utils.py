@@ -11,7 +11,7 @@ def categorical_to_labels(y):
     return [dataset.LABELS[np.argmax(categorical)] for categorical in y]
 
 
-def debug_mode():
+def enable_debug_mode():
     seed = 42
     random.seed(seed)
     os.environ["PYTHONHASHSEED"] = str(seed)

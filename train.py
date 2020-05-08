@@ -4,7 +4,8 @@ Usage: train.py [options]
 
 Options:
     -w MODEL --with=MODEL   Machine learning model [default: dnn]
-    -d --debug              Debug mode
+    -d --debug              Debug mode [default: False]
+    -o FILE --output=FILE   Path to file for saving a model [default: model.pkl]
 """
 
 import sys
@@ -14,7 +15,7 @@ import numpy as np
 import tensorflow as tf
 
 import dataset
-from training import utils, dnn, tree
+import training
 
 
 def main(argv=None):
@@ -22,11 +23,13 @@ def main(argv=None):
         argv = sys.argv[1:]
 
     args = docopt(__doc__, argv=argv)
+
     method = args["--with"]
     debug = args["--debug"]
+    output = args["--output"]
 
     if debug:
-        utils.debug_mode()
+        training.utils.enable_debug_mode()
 
     (x_train, y_train), (x_test, y_test) = dataset.load_data()
     tokenizer = dataset.get_tokenizer()
@@ -36,12 +39,9 @@ def main(argv=None):
     x_test = tokenizer.sequences_to_matrix(x_test, mode="tfidf")
     y_test = tf.keras.utils.to_categorical(y_test)
 
-    if method == "dnn":
-        model = dnn.fit_model(x_train, y_train, x_test, y_test)
-        dnn.save_model(model, "model.h5")
-    elif method == "tree":
-        model = tree.fit_model(x_train, y_train, x_test, y_test)
-        tree.save_model(model, "model.pkl")
+    module = getattr(training, method)
+    model = module.fit_model(x_train, y_train, x_test, y_test)
+    module.save_model(model, output)
 
 
 if __name__ == "__main__":
