@@ -4,6 +4,7 @@ Usage: train.py [options]
 
 Options:
     -w MODEL --with=MODEL   Machine learning model [default: dnn]
+    -d --debug              Debug mode
 """
 
 import sys
@@ -13,7 +14,7 @@ import numpy as np
 import tensorflow as tf
 
 import dataset
-from training import dnn, tree
+from training import utils, dnn, tree
 
 
 def main(argv=None):
@@ -22,8 +23,10 @@ def main(argv=None):
 
     args = docopt(__doc__, argv=argv)
     method = args["--with"]
+    debug = args["--debug"]
 
-    np.random.seed(42)
+    if debug:
+        utils.debug_mode()
 
     (x_train, y_train), (x_test, y_test) = dataset.load_data()
     tokenizer = dataset.get_tokenizer()
