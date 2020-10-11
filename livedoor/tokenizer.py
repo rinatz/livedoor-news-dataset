@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from pathlib import Path
 
 from natto import MeCab
@@ -7,29 +6,7 @@ from rich import progress
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 
-DATA_PATH = Path("~/.keras/datasets/livedoor/livedoor.npz").expanduser()
-TOKENIZER_PATH = Path("~/.keras/datasets/livedoor/tokenizer.json").expanduser()
-
-CATEGORIES = OrderedDict(
-    {
-        # site_name: description
-        "dokujo-tsushin": "独身女性",
-        "it-life-hack": "IT",
-        "kaden-channel": "家電",
-        "livedoor-homme": "男性",
-        "movie-enter": "映画",
-        "peachy": "女性",
-        "smax": "モバイル",
-        "sports-watch": "スポーツ",
-        "topic-news": "ニュース",
-    }
-)
-
-LABELS = list(CATEGORIES.values())
-
-
-def categorical_to_labels(y):
-    return [LABELS[np.argmax(categorical)] for categorical in y]
+from livedoor.config import DATA_PATH, TOKENIZER_PATH, CATEGORIES
 
 
 class MeCabTokenizer:
@@ -110,11 +87,11 @@ def create_data():
     labels = []
     livedoor = Path(tar_path).parent
 
-    for label, site_name in enumerate(CATEGORIES):
-        directory = livedoor / "text" / site_name
+    for _index, category in CATEGORIES.iterrows():
+        directory = livedoor / "text" / category.directory_name
         site_texts = load_directory_data(directory)
         texts += site_texts
-        labels += [label] * len(site_texts)
+        labels += [category.label] * len(site_texts)
 
     tokenizer = MeCabTokenizer()
 

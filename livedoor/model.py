@@ -1,14 +1,17 @@
 from pathlib import Path
-from numpy.matrixlib.defmatrix import matrix
 
+import numpy as np
 from rich import print
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 
-from livedoor.tokenizer import categorical_to_labels, load_data, get_tokenizer
+from livedoor.config import CATEGORIES, MODEL_PATH
+from livedoor.tokenizer import load_data, get_tokenizer
 
-MODEL_PATH = Path("~/.keras/datasets/livedoor/model.h5").expanduser()
+
+def categorical_to_labels(y):
+    return [CATEGORIES.iloc[np.argmax(categorical)].label for categorical in y]
 
 
 class ClassificationLogger(tf.keras.callbacks.Callback):

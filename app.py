@@ -1,5 +1,6 @@
-import streamlit as st
 from bokeh.plotting import figure
+import pandas as pd
+import streamlit as st
 
 import livedoor
 
@@ -11,14 +12,15 @@ def main():
     text = st.text_area("文章を入力してください。")
 
     if text:
-        confidences = model.predict(text)
+        categories = pd.DataFrame(
+            {
+                "site_name": livedoor.CATEGORIES.site_name,
+                "confidence": model.predict(text),
+            }
+        ).sort_values("confidence")
 
-        sorted_labels = sorted(
-            livedoor.LABELS, key=lambda x: confidences[livedoor.LABELS.index(x)]
-        )
-
-        chart = figure(y_range=sorted_labels, title="信頼性 [%]")
-        chart.hbar(y=livedoor.LABELS, right=confidences)
+        chart = figure(y_range=categories.site_name, title="信頼性 [%]")
+        chart.hbar(y=categories.site_name, right=categories.confidence)
 
         st.bokeh_chart(chart)
 
