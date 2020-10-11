@@ -12,12 +12,7 @@ def main():
     text = st.text_area("文章を入力してください。")
 
     if text:
-        categories = pd.DataFrame(
-            {
-                "site_name": livedoor.CATEGORIES.site_name,
-                "confidence": model.predict(text),
-            }
-        ).sort_values("confidence")
+        categories = model.predict(text)
 
         chart = figure(y_range=categories.site_name, title="信頼性 [%]")
         chart.hbar(y=categories.site_name, right=categories.confidence)

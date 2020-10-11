@@ -1,4 +1,7 @@
+from collections import OrderedDict
+
 import numpy as np
+import pandas as pd
 from rich import print
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
@@ -79,17 +82,18 @@ class LivedoorNewsModel:
 
         self.model = model
 
-    def predict(self, texts):
-        if isinstance(texts, str):
-            texts = [texts]
+    def predict(self, text):
+        matrix = self.tokenizer.texts_to_matrix([text])
+        prediction = self.model.predict(matrix)[0]
 
-        matrix = self.tokenizer.texts_to_matrix(texts)
-        prediction = self.model.predict(matrix)
+        categories = pd.DataFrame(
+            {
+                "site_name": CATEGORIES.site_name,
+                "confidence": prediction,
+            }
+        ).sort_values("confidence")
 
-        if len(texts) == 1:
-            return prediction[0]
-
-        return prediction
+        return categories
 
     def save(self, path):
         self.model.model.save(path)
