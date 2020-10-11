@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 
 DATA_HOME = Path("~/.keras/datasets/livedoor").expanduser()
-DATA_PATH = DATA_HOME / "livedoor.npz"
+DATA_PATH = DATA_HOME / "data.npz"
 TOKENIZER_PATH = DATA_HOME / "tokenizer.json"
 MODEL_PATH = DATA_HOME / "model.h5"
 
