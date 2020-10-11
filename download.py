@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-from livedoor.model import create_model
+from livedoor.tokenizer import create_data
 
 
 def main():
-    create_model()
+    create_data()
 
 
 if __name__ == "__main__":
