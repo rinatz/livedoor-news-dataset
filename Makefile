@@ -1,10 +1,6 @@
 .PHONY: init
 init:
-	poetry install --no-root
-
-.PHONY: dataset
-dataset:
-	poetry run python dataset.py
+	poetry install
 
 .PHONY: train
 train:

@@ -20,7 +20,7 @@ $ make init
 コーパスを使ってディープラーニングでモデルを作成します。
 
 ```shell
-$ make fit
+$ make train
 ```
 
 ## 分類器を試す
