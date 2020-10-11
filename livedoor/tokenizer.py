@@ -98,7 +98,7 @@ def load_directory_data(directory):
     return texts
 
 
-def save_data():
+def create_data():
     tar_path = tf.keras.utils.get_file(
         "ldcc-20140209.tar.gz",
         "https://www.rondhuit.com/download/ldcc-20140209.tar.gz",
