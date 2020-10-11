@@ -2,9 +2,10 @@ from pathlib import Path
 
 import pandas as pd
 
-DATA_PATH = Path("~/.keras/datasets/livedoor/livedoor.npz").expanduser()
-TOKENIZER_PATH = Path("~/.keras/datasets/livedoor/tokenizer.json").expanduser()
-MODEL_PATH = Path("~/.keras/datasets/livedoor/model.h5").expanduser()
+DATA_HOME = Path("~/.keras/datasets/livedoor").expanduser()
+DATA_PATH = DATA_HOME / "livedoor.npz"
+TOKENIZER_PATH = DATA_HOME / "tokenizer.json"
+MODEL_PATH = DATA_HOME / "model.h5"
 
 CATEGORIES = pd.DataFrame(
     [
