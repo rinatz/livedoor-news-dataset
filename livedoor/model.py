@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 import numpy as np
 import pandas as pd
 from rich import print
@@ -88,10 +86,11 @@ class LivedoorNewsModel:
 
         categories = pd.DataFrame(
             {
+                "label": CATEGORIES.label,
                 "site_name": CATEGORIES.site_name,
                 "confidence": prediction,
             }
-        ).sort_values("confidence")
+        ).sort_values("confidence", ascending=False)
 
         return categories
 
