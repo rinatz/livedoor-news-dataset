@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import numpy as np
 from rich import print
 from sklearn.metrics import classification_report
