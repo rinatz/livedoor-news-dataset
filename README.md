@@ -1,10 +1,10 @@
-# ニュースの分類器
+# livedoor-news-dataset
 
-[Livedoor ニュースコーパス] を使ったニュースの分類器のリファレンス実装です。
+[Livedoor ニュースコーパス] を使ったニュースの分類器です。
 
 ## 必要なもの
 
-- Python 3.6 以上
+- Python >= 3.6
 - Poetry
 - MeCab
 - NEologd
