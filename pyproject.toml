@@ -6,7 +6,7 @@ authors = ["IDA Kenichiro <ida.kenichiro@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
-bokeh = "^2.4.2"
+bokeh = "2.4.1"
 natto-py = "^1.0.0"
 rich = "^11.2.0"
 scikit-learn = "^1.0.2"
