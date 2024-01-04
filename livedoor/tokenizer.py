@@ -42,7 +42,9 @@ class MeCabTokenizer:
             for text in progress.track(texts, description="Fitting on texts...")
         ]
         self._tokenizer.fit_on_texts(texts)
-        return self._tokenizer.texts_to_sequences(texts)
+        sequences = self._tokenizer.texts_to_sequences(texts)
+
+        return np.array(sequences, dtype=object)
 
     def texts_to_matrix(self, texts):
         texts = [self.tokenize(text) for text in texts]
@@ -96,7 +98,7 @@ def create_data():
     tokenizer = MeCabTokenizer()
 
     x = tokenizer.fit_on_texts(texts)
-    y = np.array(labels)
+    y = np.array(labels, dtype=object)
 
     with DATA_PATH.open("wb") as npz:
         np.savez(npz, x=x, y=y)
