@@ -38,23 +38,6 @@ class LivedoorNewsModel:
         self.tokenizer = get_tokenizer()
         self.model = None
 
-    @staticmethod
-    def _build_model(num_words=1, num_labels=1):
-        model = tf.keras.Sequential(
-            [
-                tf.keras.layers.Dense(64, activation="relu", input_shape=(num_words,)),
-                tf.keras.layers.Dropout(0.5),
-                tf.keras.layers.Dense(64, activation="relu"),
-                tf.keras.layers.Dropout(0.5),
-                tf.keras.layers.Dense(num_labels, activation="softmax"),
-            ]
-        )
-        model.compile(
-            optimizer="rmsprop", loss="categorical_crossentropy", metrics=["acc"]
-        )
-
-        return model
-
     def fit_model(self, x_train, y_train, x_test, y_test):
         x_train = self.tokenizer.sequences_to_matrix(x_train)
         y_train = tf.keras.utils.to_categorical(y_train)
@@ -66,17 +49,27 @@ class LivedoorNewsModel:
         )
         logger = ClassificationLogger(x_val, y_val, x_test, y_test)
 
-        model = tf.keras.wrappers.scikit_learn.KerasClassifier(
-            self._build_model,
-            num_words=x_train.shape[1],
-            num_labels=y_train.shape[1],
+        model = tf.keras.Sequential(
+            [
+                tf.keras.layers.Dense(64, activation="relu", input_shape=(x_train.shape[1],)),
+                tf.keras.layers.Dropout(0.5),
+                tf.keras.layers.Dense(64, activation="relu"),
+                tf.keras.layers.Dropout(0.5),
+                tf.keras.layers.Dense(y_train.shape[1], activation="softmax"),
+            ]
+        )
+        model.compile(
+            optimizer="rmsprop", loss="categorical_crossentropy", metrics=["acc"]
+        )
+
+        model.fit(
+            x_train,
+            y_train,
             epochs=5,
             batch_size=16,
             validation_data=(x_val, y_val),
             callbacks=[logger],
         )
-
-        model.fit(x_train, y_train)
 
         self.model = model
 

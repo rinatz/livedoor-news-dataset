@@ -4,15 +4,14 @@
 
 ## 必要なもの
 
-- Python >= 3.6
-- Poetry
+- Python 3.8
 - MeCab
 - NEologd
 
 ## 準備
 
 ```shell
-$ make init
+$ python3 -m pip install -r requirements.txt
 ```
 
 ## データセットのダウンロード
@@ -20,7 +19,7 @@ $ make init
 データセットをダウンロードし、形態素解析を行います。
 
 ```shell
-$ make download
+$ python3 download.py
 ```
 
 ## モデルの作成
@@ -28,7 +27,7 @@ $ make download
 コーパスを使ってディープラーニングでモデルを作成します。
 
 ```shell
-$ make train
+$ python3 train.py
 ```
 
 ## 分類器を試す
@@ -36,7 +35,7 @@ $ make train
 Web ページを開きます。
 
 ```shell
-$ make serve
+$ streamlit run app.py
 ```
 
 http://localhost:8501 にアクセスすると Web ページが表示されますので、適当な文章を入力して下さい。下部に判定結果がグラフで表示されます。
