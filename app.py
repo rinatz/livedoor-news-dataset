@@ -7,16 +7,22 @@ import livedoor
 def main():
     model = livedoor.load_model()
 
-    st.title("ニュースの分類器")
-    text = st.text_area("文章を入力してください。")
+    st.title("ニュース記事の分類器")
 
-    if text:
+    with st.form(key="form"):
+        text = st.text_area(
+            "記事を貼り付けると、どのジャンルの記事なのかを推定します。",
+            height=400,
+        )
+        submit_button = st.form_submit_button(label="推定する")
+
+    if submit_button or text:
+        st.caption("")
+        st.markdown("## 結果")
+        st.caption("")
+
         categories = model.predict(text)
-
-        chart = figure(y_range=categories.site_name, title="信頼性 [%]")
-        chart.hbar(y=categories.site_name, right=categories.confidence)
-
-        st.bokeh_chart(chart)
+        st.write(categories)
 
 
 if __name__ == "__main__":

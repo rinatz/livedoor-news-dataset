@@ -19,5 +19,5 @@ CATEGORIES = pd.DataFrame(
         [7, "sports-watch", "スポーツ"],
         [8, "topic-news", "ニュース"],
     ],
-    columns=["label", "directory_name", "site_name"],
+    columns=["label", "directory_name", "genre"],
 )

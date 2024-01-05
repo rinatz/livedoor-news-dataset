@@ -9,25 +9,25 @@ from livedoor.config import CATEGORIES, MODEL_PATH
 from livedoor.tokenizer import load_data, get_tokenizer
 
 
-def categorical_to_site_name(y):
-    return [CATEGORIES.iloc[np.argmax(categorical)].site_name for categorical in y]
+def categorical_to_genre(y):
+    return [CATEGORIES.iloc[np.argmax(categorical)].genre for categorical in y]
 
 
 class ClassificationLogger(tf.keras.callbacks.Callback):
     def __init__(self, x_val, y_val, x_test, y_test):
         self.x_val = x_val
-        self.y_val = categorical_to_site_name(y_val)
+        self.y_val = categorical_to_genre(y_val)
         self.x_test = x_test
-        self.y_test = categorical_to_site_name(y_test)
+        self.y_test = categorical_to_genre(y_test)
 
     def on_epoch_end(self, epoch, logs=None):
-        y_pred = categorical_to_site_name(self.model.predict(self.x_val))
+        y_pred = categorical_to_genre(self.model.predict(self.x_val))
         report = classification_report(y_pred, self.y_val)
         print("\n\nval_classification_report:")
         print(report)
 
     def on_train_end(self, logs=None):
-        y_pred = categorical_to_site_name(self.model.predict(self.x_test))
+        y_pred = categorical_to_genre(self.model.predict(self.x_test))
         report = classification_report(y_pred, self.y_test)
         print("\n\ntest_classification_report:")
         print(report)
@@ -80,7 +80,7 @@ class LivedoorNewsModel:
         categories = pd.DataFrame(
             {
                 "label": CATEGORIES.label,
-                "site_name": CATEGORIES.site_name,
+                "genre": CATEGORIES.genre,
                 "confidence": prediction,
             }
         ).sort_values("confidence", ascending=False)

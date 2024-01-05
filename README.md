@@ -4,7 +4,7 @@
 
 ## 必要なもの
 
-- Python 3.8
+- Python3
 - MeCab
 - NEologd
 
