@@ -1,4 +1,3 @@
-from bokeh.plotting import figure
 import streamlit as st
 
 import livedoor
