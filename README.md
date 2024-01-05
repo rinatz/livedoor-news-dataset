@@ -1,6 +1,9 @@
 # livedoor-news-dataset
 
-[Livedoor ニュースコーパス] を使ったニュースの分類器です。
+[Livedoor ニュースコーパス] を使ったニュース記事の分類器です。
+
+![](image-01.png)
+![](image-02.png)
 
 ## 必要なもの
 
