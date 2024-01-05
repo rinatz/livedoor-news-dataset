@@ -1,30 +1,33 @@
 from pathlib import Path
 
-from natto import MeCab
 import numpy as np
 from rich import progress
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
+from vibrato import Vibrato
+from zstandard import ZstdDecompressor
 
 from livedoor.config import DATA_PATH, TOKENIZER_PATH, CATEGORIES
 
 
-class MeCabTokenizer:
-    DEFAULT_DICTIONARY = "/usr/local/lib/mecab/dic/mecab-ipadic-neologd"
+class VibratoTokenizer:
+    DEFAULT_DICTIONARY = "ipadic-mecab-2_7_0/system.dic.zst"
 
     def __init__(self, dic=DEFAULT_DICTIONARY):
-        self._mecab = MeCab(f"-d {dic} -F%f[0],%f[1],%f[2],%f[3],%f[6]")
+        unzstd = ZstdDecompressor()
+
+        with open(dic, "rb") as zst:
+            with unzstd.stream_reader(zst) as r:
+                self._vibrato = Vibrato(r.read())
+
         self._tokenizer = tf.keras.preprocessing.text.Tokenizer()
 
     def tokenize(self, text):
         tokens = []
 
-        for node in self._mecab.parse(text, as_nodes=True):
-            if node.is_eos():
-                continue
-
-            feature = node.feature.split(",")
-            part_of_speech, lemma = feature[0:4], feature[4]
+        for token in self._vibrato.tokenize(text):
+            feature = token.feature().split(",")
+            part_of_speech, lemma = feature[0:2], feature[6]
 
             if part_of_speech[0] not in ["名詞", "動詞", "形容詞"]:
                 continue
@@ -95,7 +98,7 @@ def create_data():
         texts += site_texts
         labels += [category.label] * len(site_texts)
 
-    tokenizer = MeCabTokenizer()
+    tokenizer = VibratoTokenizer()
 
     x = tokenizer.fit_on_texts(texts)
     y = np.array(labels, dtype=object)
@@ -117,6 +120,6 @@ def load_data(test_split=0.2):
 
 
 def get_tokenizer():
-    tokenizer = MeCabTokenizer()
+    tokenizer = VibratoTokenizer()
     tokenizer.load(TOKENIZER_PATH)
     return tokenizer

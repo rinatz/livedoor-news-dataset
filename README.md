@@ -7,8 +7,7 @@
 ## 必要なもの
 
 - Python3
-- MeCab
-- NEologd
+- [Vibrato](https://github.com/daac-tools/vibrato)（辞書のみ）
 
 ## 準備
 
