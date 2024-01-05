@@ -88,7 +88,7 @@ class LivedoorNewsModel:
         return categories
 
     def save(self, path):
-        self.model.model.save(path)
+        self.model.save(path)
 
     def load(self, path):
         self.model = tf.keras.models.load_model(path)
