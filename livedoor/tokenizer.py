@@ -1,7 +1,5 @@
 from pathlib import Path
 
-import os
-
 from natto import MeCab
 import numpy as np
 from rich import progress
@@ -9,9 +7,6 @@ from sklearn.model_selection import train_test_split
 import tensorflow as tf
 
 from livedoor.config import DATA_PATH, TOKENIZER_PATH, CATEGORIES
-
-
-os.environ["MECAB_CHARSET"] = "utf-8"
 
 
 class MeCabTokenizer:
