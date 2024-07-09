@@ -79,5 +79,5 @@ watchdog==3.0.0
 Werkzeug==3.0.1
 wrapt==1.14.1
 xyzservices==2023.10.1
-zipp==3.17.0
+zipp==3.19.1
 zstandard==0.22.0
