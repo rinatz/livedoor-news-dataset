@@ -1,0 +1,15 @@
+[project]
+name = "livedoor-news-dataset"
+version = "0.1.0"
+description = "This is a news article classifier using the Livedoor News Corpus."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "keras>=3.8.0",
+    "mecab-python3>=1.0.10",
+    "pandas>=2.2.3",
+    "scikit-learn>=1.6.1",
+    "tensorflow>=2.18.0",
+    "tokenizers>=0.21.0",
+    "unidic-lite>=1.0.8",
+]
