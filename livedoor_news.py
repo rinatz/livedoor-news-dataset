@@ -1,67 +1,69 @@
-import os
-import pandas as pd
-from sklearn.preprocessing import LabelEncoder
+import keras
+import pickle
+import numpy as np
 from tokenizers import Tokenizer
 from tokenizers.models import WordLevel
 from tokenizers.pre_tokenizers import Whitespace
 from tokenizers.trainers import WordLevelTrainer
-import keras
-import pickle
 
-# フォルダからlivedoorニュースコーパスを読み込む関数
-def load_livedoor_news_corpus(data_dir):
-    data = []
-    labels = []
+# livedoorニュースコーパスのダウンロードと解凍
+url = "https://www.rondhuit.com/download/ldcc-20140209.tar.gz"
+extracted_dir = keras.utils.get_file("ldcc-20140209", origin=url, extract=True)
 
-    # サブフォルダ（カテゴリ名）を取得
-    for category in os.listdir(data_dir):
-        category_path = os.path.join(data_dir, category)
-        if os.path.isdir(category_path):  # サブフォルダのみ処理
-            for file_name in os.listdir(category_path):
-                if file_name.endswith(".txt"):
-                    file_path = os.path.join(category_path, file_name)
-                    with open(file_path, "r", encoding="utf-8") as f:
-                        lines = f.readlines()
-                        if len(lines) > 2:  # 最低限のフォーマット確認
-                            text = "".join(lines[2:])  # 本文部分を結合
-                            data.append(text)
-                            labels.append(category)
-    return data, labels
+data_dir = f"{extracted_dir}/text"  # 解凍されたテキストフォルダ
+batch_size = 32
+validation_split = 0.2
 
-# データの読み込み
-data_dir = "livedoor_news"  # livedoorニュースコーパス解凍後のフォルダ
-texts, labels = load_livedoor_news_corpus(data_dir)
+# データセットの作成
+train_ds = keras.utils.text_dataset_from_directory(
+    data_dir,
+    batch_size=batch_size,
+    validation_split=validation_split,
+    subset="training",
+    seed=42,
+)
+val_ds = keras.utils.text_dataset_from_directory(
+    data_dir,
+    batch_size=batch_size,
+    validation_split=validation_split,
+    subset="validation",
+    seed=42,
+)
 
-# pandas DataFrameに変換
-df = pd.DataFrame({"text": texts, "label": labels})
+# ラベル情報の取得
+class_names = train_ds.class_names
 
-# ラベルエンコード
-label_encoder = LabelEncoder()
-df["label_encoded"] = label_encoder.fit_transform(df["label"])
-
-# Hugging Face Tokenizerのセットアップ
+# トークナイザのセットアップ
 tokenizer = Tokenizer(WordLevel(unk_token="[UNK]"))
 tokenizer.pre_tokenizer = Whitespace()
 
 # トークナイザの学習
+texts = [text.numpy().decode("utf-8") for text, label in train_ds.unbatch()]
 trainer = WordLevelTrainer(vocab_size=20000, special_tokens=["[PAD]", "[UNK]"])
-tokenizer.train_from_iterator(df["text"], trainer)
+tokenizer.train_from_iterator(texts, trainer)
 
-# トークン化とパディング処理
+# パディング処理を含むデータ前処理関数
 max_sequence_length = 100
 
-def tokenize_and_pad(texts, tokenizer, max_len):
+def preprocess_dataset(dataset, tokenizer, max_len):
+    texts = [text.numpy().decode("utf-8") for text, label in dataset.unbatch()]
+    labels = [label.numpy() for text, label in dataset.unbatch()]
     tokenized = [tokenizer.encode(text).ids for text in texts]
     padded = keras.utils.pad_sequences(tokenized, maxlen=max_len, padding='post', truncating='post')
-    return padded
+    return np.array(padded), np.array(labels)
 
-X_padded = tokenize_and_pad(df["text"], tokenizer, max_sequence_length)
-y_encoded = df["label_encoded"].values
+# データの前処理
+X_train, y_train = preprocess_dataset(train_ds, tokenizer, max_sequence_length)
+X_val, y_val = preprocess_dataset(val_ds, tokenizer, max_sequence_length)
+
+# データの形状確認
+print(f"X_train shape: {X_train.shape}, y_train shape: {y_train.shape}")
+print(f"X_val shape: {X_val.shape}, y_val shape: {y_val.shape}")
 
 # モデル構築
-num_classes = len(label_encoder.classes_)
+num_classes = len(class_names)
 model = keras.Sequential([
-    keras.layers.Embedding(input_dim=20000, output_dim=128, input_length=max_sequence_length),
+    keras.layers.Embedding(input_dim=20000, output_dim=128),
     keras.layers.LSTM(128, return_sequences=False),
     keras.layers.Dropout(0.5),
     keras.layers.Dense(num_classes, activation='softmax'),
@@ -71,16 +73,13 @@ model = keras.Sequential([
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
 # モデルのトレーニング
-model.fit(X_padded, y_encoded, epochs=10, batch_size=32, validation_split=0.2)
+model.fit(X_train, y_train, epochs=10, batch_size=batch_size, validation_data=(X_val, y_val))
 
-# モデルの保存
-model.save("news_classification_model.keras")
-
-# トークナイザの保存
+# モデル、トークナイザ、ラベル情報の保存
+model.save("news_classification_model.h5")
 tokenizer.save("news_tokenizer.json")
 
-# ラベルエンコーダの保存
 with open("label_encoder.pkl", "wb") as f:
-    pickle.dump(label_encoder, f)
+    pickle.dump(class_names, f)
 
 print("モデル、トークナイザ、ラベルエンコーダの保存が完了しました。")
